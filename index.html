@@ -215,7 +215,7 @@ td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}
 <body>
 <header class="cover band">
   <div class="wrap">
-    <h1>EZ华文 · 小学华文复习<small id="hello">小一至小六 · 认读、写字、阅读</small></h1>
+    <h1 id="brandHome" style="cursor:pointer" title="回到首页">EZ华文 · 小学华文复习<small id="hello">小一至小六 · 认读、写字、阅读</small></h1>
     <div class="chips">
       <button class="chip" id="chipHome">首页</button>
       <button class="chip" id="chipHero">我的英雄</button>
@@ -276,8 +276,8 @@ const yesterday=()=>new Date(Date.now()-864e5).toLocaleDateString('en-CA');
 const starsOf=p=>p>=.9?3:p>=.7?2:p>=.5?1:0;
 const starHtml=n=>`<span class="stars" aria-label="${n} 颗星">${'★'.repeat(n)}<span class="e">${'★'.repeat(3-n)}</span></span>`;
 const isHan=c=>/[一-鿿]/.test(c);
-const lvName=id=>LEVELS.find(l=>l.id===id).name;
-const lvIdx=id=>LEVELS.find(l=>l.id===id).k;
+const lvName=id=>{const L=LEVELS.find(l=>l.id===id);return L?L.name:''};
+const lvIdx=id=>{const L=LEVELS.find(l=>l.id===id);return L?L.k:0};
 const py=c=>(DICT[c]||{}).py||'';
 const en=c=>(DICT[c]||{}).en||'';
 const tone=p=>/[āēīōūǖ]/.test(p)?1:/[áéíóúǘ]/.test(p)?2:/[ǎěǐǒǔǚ]/.test(p)?3:/[àèìòùǜ]/.test(p)?4:0;
@@ -398,7 +398,7 @@ $('#chipReview').onclick=()=>startReview();$('#chipHero').onclick=()=>go('hero')
 function nextStep(){
   const rv=Object.keys(S.review).length;
   if(rv>=6)return{t:`复习本里有 ${rv} 个字`,d:'先把不熟的字练熟，再往前走。',btn:'开始复习',go:startReview};
-  const last=[...S.log].reverse().find(l=>l.a.includes('|'));const start=last?lvIdx(last.a.split('|')[0]):0;
+  const last=[...S.log].reverse().find(l=>l.a&&l.a.includes('|')&&LEVELS.some(L=>L.id===l.a.split('|')[0]));const start=last?lvIdx(last.a.split('|')[0]):0;
   for(const L of LEVELS.slice(start)){if(!CONTENT[L.id])continue;
     for(const x of actList(L.id)){const s=S.stars[x.id];if((s||0)<2)return{lv:L.id,t:`${L.name} · ${x.label}`,d:s===undefined?(x.kind==='p'?`大王“${bossFor(x.lv,x.i).name}”在等你。`:x.kind==='g'?`“${gramMon(x.lv).name}”在语文应用里等你。`:x.kind==='c'?`“${collMon(x.lv).name}”在词语搭配里等你。`:`怪物“${monFor(x.lv,x.i).name}”在这一课。`):`上次 ${s} 颗星，再做一次争取两颗星以上。`,btn:'出发',go:()=>startAct(x)}}}
   if(rv)return{t:`复习本里有 ${rv} 个字`,d:'把剩下的字复习完吧。',btn:'开始复习',go:startReview};
@@ -408,16 +408,24 @@ function nextStep(){
 /* ================= views ================= */
 let writer=null;
 function stopWriter(){if(writer){try{writer.cancelQuiz()}catch(e){}writer=null}}
-function go(v){stopWriter();if(location.hash==='#'+v)render();else location.hash=v}
-window.addEventListener('hashchange',()=>{stopWriter();render()});
+function go(v){stopWriter();try{speechSynthesis.cancel()}catch(e){}if(location.hash==='#'+v)render();else location.hash=v}
+window.addEventListener('hashchange',()=>{stopWriter();try{speechSynthesis.cancel()}catch(e){}render()});
+let backTo='home';
 function render(){
+  try{route()}catch(err){console.error(err);
+    app.innerHTML=`<div class="card"><h2>这一页打不开</h2><p class="muted">请按“回到首页”。如果还是这样，请告诉老师：<br><small>${esc(String(err&&err.message||err))}</small></p><button class="pri" id="errHome">回到首页</button></div>`;
+    $('#errHome').onclick=()=>{history.replaceState(null,'','#home');try{viewHome()}catch(e){location.reload()}}}
+}
+function route(){
   window.scrollTo(0,0);
   const h=location.hash.slice(1)||'home';
+  if(h==='play'){history.replaceState(null,'','#'+backTo);return route()}
   if(!S.name||!S.hero.type)return viewStart();
   if(h==='progress')return viewProgress();
   if(h==='hero')return viewHero();
   if(h==='psle')return viewPSLE();
   if(h==='story'&&EZ.story)return viewStory();
+  if(h.startsWith('chapter-')&&EZ.story){const k=+h.slice(8)-1;if(EZ.story[k]&&totalStars()>=EZ.story[k].need)return viewChapter(k,true);history.replaceState(null,'','#story');return viewStory()}
   if(h.startsWith('level-')){const id=h.slice(6).toUpperCase();if(CONTENT[id])return viewLevel(id)}
   viewHome();
 }
@@ -795,7 +803,7 @@ function viewStory(){
   app.querySelectorAll('svg [data-story]').forEach(g=>{const o=()=>{const k=+g.dataset.story;if(totalStars()>=ST[k].need)viewChapter(k)};g.addEventListener('click',o);g.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();o()}})});
 }
 function viewChapter(k){
-  leaveHash();try{speechSynthesis.cancel()}catch(e){}
+  leaveHash('chapter-'+(k+1));try{speechSynthesis.cancel()}catch(e){}
   const ST=EZ.story,c=ST[k];if(!c||totalStars()<c.need)return viewStory();
   const H=HEROES[S.hero.type]?HEROES[S.hero.type].name:'墨墨',HP=HERO_PY[S.hero.type]||'mò mò';
   const text=c.text.replace(/\{H\}/g,H),pys=c.py.replace(/\{H\}/g,HP).trim().split(/\s+/),ens=c.ens.map(x=>x.replace(/\{H\}/g,H));
@@ -969,7 +977,11 @@ function startReview(){
   const items=shuffle(rv).slice(0,12).map(([c,r])=>r.k==='w'?{type:'write',lv:r.lv,ch:c}:pyItem(r.lv,c,''));
   run({title:'复习本',items,id:null,back:'progress',mon:{name:'复习怪',svg:monsterSVG(99,280,false)},monId:null});
 }
-function leaveHash(){history.replaceState(null,'',location.pathname+location.search);window.scrollTo(0,0)}
+function leaveHash(tag){tag=tag||'play';const cur=location.hash.slice(1);
+  if(cur===tag){window.scrollTo(0,0);return}
+  if(cur!=='play'&&!cur.startsWith('chapter-'))backTo=cur||'home';
+  if(cur==='play'||(cur.startsWith('chapter-')&&tag.startsWith('chapter-')))history.replaceState(null,'','#'+tag);else history.pushState(null,'','#'+tag);
+  window.scrollTo(0,0)}
 
 function run(R){
   leaveHash();
@@ -1170,6 +1182,11 @@ function startReading(lv,i,prev){
 
 chips();render();
 }
+</script>
+<script>
+document.getElementById('brandHome').addEventListener('click',()=>go('home'));
+window.addEventListener('pageshow',e=>{if(e.persisted||!document.getElementById('app').children.length)render()});
+window.addEventListener('error',()=>{const a=document.getElementById('app');if(a&&!a.children.length)setTimeout(render,0)});
 </script>
 </body>
 </html>

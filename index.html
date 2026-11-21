@@ -1,0 +1,730 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>EZ华文复习</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700;900&family=Noto+Serif+SC:wght@600&display=swap" rel="stylesheet">
+<style>
+/* VOICE: friendly study adventure for 11-year-olds; learning first, battle as the reward layer
+   IDEA: the 田字格 exercise book: levels are grid squares, monsters are "字怪" defeated by correct answers
+   PICTURE: the hero card and the level map; in activities, a small battle arena above the question
+   COLOUR and TYPE: exercise-book cover blue, white paper, 田字格 red; Noto Sans SC + 楷体 for characters
+   LAYOUT: cover band, map + hero side by side, activities full width with arena on top */
+:root{color-scheme:light dark;
+--bg:light-dark(#ffffff,#121519);--ink:light-dark(#1b2230,#e8ecf1);--muted:light-dark(#5b6472,#9aa4b1);
+--cover:light-dark(#1f4e79,#1a3c5e);--cover-ink:#f4f7fb;--red:light-dark(#cf3e35,#ef6a5f);--gold:light-dark(#b7861b,#e9b949);
+--grid:light-dark(#f1c4bf,#5a3330);--soft:light-dark(#f4f6f9,#1b2027);--line:light-dark(#dfe3e9,#2c333d);
+--ok:light-dark(#2b7a4b,#5cc48a);--okbg:light-dark(#e8f5ed,#18301f);--badbg:light-dark(#fcebea,#3a1d1b);--partbg:light-dark(#fff6e0,#33291a)}
+:root[data-theme=light]{color-scheme:light}:root[data-theme=dark]{color-scheme:dark}
+*{box-sizing:border-box;min-width:0}
+[hidden]{display:none!important}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.6 "Noto Sans SC","PingFang SC","Microsoft YaHei",sans-serif;overflow-x:clip}
+.kai{font-family:"KaiTi","STKaiti","Kaiti SC","BiauKai","Noto Serif SC",serif}
+button,input,textarea{font:inherit;color:inherit}
+button{cursor:pointer;min-height:44px;border-radius:10px;border:1px solid var(--line);background:var(--bg);padding:8px 16px}
+button:focus-visible,input:focus-visible,textarea:focus-visible,summary:focus-visible{outline:3px solid var(--red);outline-offset:2px}
+.pri{background:var(--cover);color:var(--cover-ink);border-color:var(--cover);font-weight:500}
+.ghost{background:transparent;border-color:transparent;color:var(--muted)}
+.tog[aria-pressed=true]{background:var(--soft);border-color:var(--cover);font-weight:500}
+button:disabled{opacity:.45;cursor:default}
+input[type=text],textarea{font-size:16px;border:1px solid var(--line);border-radius:10px;padding:10px 12px;background:var(--bg);width:100%}
+.band{padding:clamp(20px,3.5vw,48px) max(5vw,16px)}
+.wrap{max-width:1240px;margin:0 auto}
+header.cover{background:var(--cover);color:var(--cover-ink)}
+header .wrap{display:flex;flex-wrap:wrap;gap:12px 24px;align-items:center;justify-content:space-between}
+header h1{margin:0;font-size:clamp(24px,3.4vw,36px);line-height:1.1;font-weight:700}
+header h1 small{display:block;font-size:15px;font-weight:400;opacity:.8;margin-top:6px}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.25);color:var(--cover-ink);border-radius:999px;padding:6px 14px;font-size:14px;min-height:40px}
+h2{font-size:22px;line-height:1.2;margin:0 0 14px}
+h3{font-size:17px;margin:0 0 6px}
+.muted{color:var(--muted)}.note{font-size:13px;color:var(--muted)}
+.home{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);gap:28px}
+@media(max-width:860px){.home{grid-template-columns:minmax(0,1fr)}}
+.map{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:10px}
+@media(max-width:520px){.map{gap:5px}.cell{padding:2px}.cell b{font-size:15px}.cell span{display:none}}
+.cell{position:relative;aspect-ratio:1;border:2px solid var(--red);border-radius:6px;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:6px;overflow:hidden}
+.cell::before{content:"";position:absolute;inset:0;background:linear-gradient(var(--grid),var(--grid)) center/100% 1px no-repeat,linear-gradient(var(--grid),var(--grid)) center/1px 100% no-repeat;pointer-events:none}
+.cell .fill{position:absolute;left:0;right:0;bottom:0;background:light-dark(#fbe3e0,#3a2321);transition:height .5s}
+.cell b{position:relative;font-size:clamp(22px,3.2vw,36px);white-space:nowrap;line-height:1;font-weight:600}
+.cell span{position:relative;font-size:13px;color:var(--muted);margin-top:8px}
+.cell.off{border-style:dashed;opacity:.55;cursor:default}
+.cell.next{box-shadow:0 0 0 4px light-dark(#f8d3cf,#4d2a27)}
+.card{border:1px solid var(--line);border-radius:14px;padding:18px;background:var(--bg)}
+.next-card{background:var(--soft);border:0}
+.next-card .t{font-size:20px;font-weight:700;margin:4px 0}
+.meter{height:10px;background:var(--soft);border-radius:99px;overflow:hidden;border:1px solid var(--line)}
+.meter i{display:block;height:100%;background:var(--cover);transition:width .5s}
+.meter.xp i{background:var(--gold)}
+.skill{display:grid;grid-template-columns:4.5em minmax(0,1fr) 3.5em;gap:10px;align-items:center;margin:10px 0;font-size:15px}
+.skill em{font-style:normal;text-align:right;font-variant-numeric:tabular-nums}
+.hero-card{display:grid;grid-template-columns:120px minmax(0,1fr);gap:16px;align-items:center}
+.hero-card svg{width:120px;height:120px;overflow:visible}
+.hero-card .nm{font-size:22px;font-weight:700}
+.stat{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:14px;margin:6px 0}
+.gear{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px}
+.gear span{border:1px solid var(--line);border-radius:999px;padding:3px 10px;font-size:13px;color:var(--muted)}
+.gear span.got{border-color:var(--gold);color:var(--gold);font-weight:500}
+.stars{color:var(--red);letter-spacing:2px;white-space:nowrap}.stars .e{color:var(--line)}
+.lessons{display:grid;gap:10px}
+.lesson{display:grid;grid-template-columns:64px 5.5em minmax(0,1fr) auto auto;gap:12px;align-items:center;border:1px solid var(--line);border-radius:12px;padding:10px 14px}
+.lesson .chars{font-size:20px;letter-spacing:2px;overflow-wrap:anywhere}
+.lesson .mini svg{width:56px;height:56px}
+.act{display:flex;flex-direction:column;align-items:center;gap:2px;min-width:92px}
+.act button{width:100%;padding:6px 10px}
+@media(max-width:640px){.lesson{grid-template-columns:56px minmax(0,1fr) minmax(0,1fr)}.lesson .chars{grid-column:1/-1}.lesson .mini{grid-row:span 1}}
+.topbar{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.topbar .meter{flex:1;min-width:120px}
+.stage{max-width:780px;margin:0 auto}
+.arena{position:relative;display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);align-items:end;gap:8px;border-radius:16px;padding:34px 12px 12px;margin:12px 0;overflow:hidden;
+background:linear-gradient(transparent 72%,light-dark(#d9e4ee,#1e2a36) 72%),linear-gradient(light-dark(#eef4fa,#17202a),light-dark(#e3edf6,#151d26))}
+.fighter{display:flex;flex-direction:column;align-items:center;gap:2px;position:relative}
+.fighter .body{width:min(116px,26vw);aspect-ratio:1}
+.fighter svg{width:100%;height:100%;overflow:visible}
+.tag{font-size:14px;font-weight:500;text-align:center}
+.hearts{color:var(--red);font-size:17px;letter-spacing:2px;min-height:22px}.hearts .e{color:var(--line)}
+.hp{width:min(140px,30vw);height:10px;border-radius:99px;background:var(--bg);border:1px solid var(--line);overflow:hidden}.hp i{display:block;height:100%;background:var(--red);transition:width .4s}
+.vs{font-size:13px;color:var(--gold);font-weight:900;align-self:center;text-align:center;min-width:3.5em}
+.bmsg{position:absolute;left:8px;right:8px;top:8px;text-align:center;font-weight:700;font-size:15px}
+.dmg{position:absolute;top:-6px;font-weight:900;font-size:24px;color:var(--red);animation:up .9s forwards;pointer-events:none}
+.dmg.heal{color:var(--ok)}
+@keyframes up{to{transform:translateY(-40px);opacity:0}}
+.atkR{animation:atkR .45s}@keyframes atkR{50%{transform:translateX(44px) rotate(8deg)}}
+.atkL{animation:atkL .45s}@keyframes atkL{50%{transform:translateX(-44px) rotate(-6deg)}}
+.shake{animation:shake .4s}@keyframes shake{20%,60%{transform:translateX(-8px)}40%,80%{transform:translateX(8px)}}
+.ko .body{opacity:.3;filter:grayscale(1);transform:rotate(-10deg) translateY(8px);transition:.6s}
+.sil svg{filter:brightness(0);opacity:.16}
+.q{font-size:clamp(20px,3vw,26px);line-height:1.6;margin:14px 0}
+.q ruby rt,.passage rt{font-size:11px;color:var(--muted);font-family:"Noto Sans SC",sans-serif}
+.big{font-size:clamp(44px,8vw,64px);line-height:1}
+.blank{display:inline-block;min-width:1.4em;border-bottom:3px solid var(--red);text-align:center;color:var(--red)}
+.opts{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:12px}
+.opt{font-size:34px;min-height:84px;border-width:2px}
+.opt.ok{background:var(--okbg);border-color:var(--ok)}.opt.bad{background:var(--badbg);border-color:var(--red)}
+.fb{min-height:28px;margin:12px 0;font-weight:500}.fb.ok{color:var(--ok)}.fb.bad{color:var(--red)}
+.hintbox{background:var(--partbg);border-radius:10px;padding:8px 12px;margin-top:8px}
+.row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.pad{position:relative;width:min(290px,78vw);aspect-ratio:1;margin:8px auto;border:2px solid var(--red);border-radius:6px;touch-action:none;
+background:linear-gradient(var(--grid),var(--grid)) center/100% 1px no-repeat,linear-gradient(var(--grid),var(--grid)) center/1px 100% no-repeat,
+linear-gradient(45deg,transparent calc(50% - .5px),var(--grid) 50%,transparent calc(50% + .5px)),linear-gradient(-45deg,transparent calc(50% - .5px),var(--grid) 50%,transparent calc(50% + .5px))}
+.pad>svg{position:absolute;inset:0;width:100%;height:100%}
+.cue{text-align:center}.cue .py{font-size:26px;color:var(--red);font-weight:500}.cue .ctx{font-size:30px}.cue .en{color:var(--muted)}
+.passage{font-size:21px;line-height:2.4;background:var(--soft);border-radius:12px;padding:16px 20px}
+.passage p{margin:0 0 4px}
+.passage ruby{cursor:pointer;border-radius:4px}.rd:not(.nopy) .passage ruby{margin:0 .14em}
+.passage ruby:hover{background:light-dark(#fde6e3,#3a2321)}
+.passage .sen.on{background:light-dark(#fff1c9,#3a3018);border-radius:6px}
+.passage ruby.sel{background:var(--red);color:#fff}
+.passage .en{font-family:"Noto Sans SC",sans-serif;font-size:15px;line-height:1.5;color:var(--muted);margin:0 0 14px}
+.rd.nopy rt{display:none}.rd.nopy .passage{line-height:1.9}
+.rd.noen .en,.rd.noen .qen{display:none}
+.qen{font-size:14px;color:var(--muted)}
+.wordcard{position:sticky;bottom:10px;z-index:2;display:grid;grid-template-columns:auto minmax(0,1fr);gap:4px 16px;align-items:center;background:var(--bg);border:2px solid var(--cover);border-radius:14px;padding:12px 16px;margin-top:12px;box-shadow:0 6px 20px rgba(0,0,0,.12)}
+.wordcard .c{font-size:48px;line-height:1;grid-row:span 3}
+.wordcard .p{font-size:20px;color:var(--red);font-weight:500}
+.rq{border-top:1px solid var(--line);padding:16px 0}
+.rq .n{font-weight:700;margin-right:6px}
+.rq .opts{grid-template-columns:repeat(auto-fit,minmax(170px,1fr));margin-top:8px}
+.rq label.o{display:flex;gap:8px;align-items:center;border:1px solid var(--line);border-radius:10px;padding:10px 12px;min-height:44px;cursor:pointer}
+.rq label.o small{display:block;color:var(--muted)}
+.mark{margin-top:10px;padding:10px 12px;border-radius:10px;font-size:15px}
+.mark.ok{background:var(--okbg)}.mark.part{background:var(--partbg)}.mark.bad{background:var(--badbg)}
+.model{color:var(--muted);margin-top:4px}
+.sum{text-align:center;padding:12px 0}.sum .stars{font-size:44px}
+.revchars{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:12px 0}
+.revchars span{border:2px solid var(--red);border-radius:4px;width:52px;height:52px;display:grid;place-items:center;font-size:30px}
+.reward{display:inline-block;background:light-dark(#fff5d6,#33291a);border:1px solid var(--gold);border-radius:12px;padding:8px 14px;margin:4px}
+.heroes{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px}
+.heroes button{display:flex;flex-direction:column;align-items:center;gap:6px;padding:16px;border-width:2px}
+.heroes button svg{width:120px;height:120px;overflow:visible}
+.heroes button[aria-pressed=true]{border-color:var(--red)}
+.dex{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:12px}
+.dex div{border:1px solid var(--line);border-radius:12px;padding:10px;text-align:center;font-size:14px}
+.dex svg{width:84px;height:84px}
+table{border-collapse:collapse;width:100%;font-size:15px}
+th,td{border-bottom:1px solid var(--line);padding:8px 6px;text-align:left}
+td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}
+.scroll{overflow-x:auto}
+.set label{display:flex;gap:10px;align-items:center;min-height:44px}
+.set input{width:20px;height:20px}
+.banner{background:var(--badbg);padding:10px 16px;font-size:14px}
+.say{min-height:40px;padding:4px 12px;font-size:14px}
+.toast{position:fixed;left:50%;bottom:16px;transform:translateX(-50%);z-index:9;width:min(92vw,460px);background:var(--ink);color:var(--bg);border-radius:14px;padding:14px 16px;font-size:15px;line-height:1.6;box-shadow:0 8px 24px rgba(0,0,0,.25)}
+.toast button{display:block;margin-top:8px;background:var(--bg);color:var(--ink);border:0;min-height:40px}
+.topic{display:inline-block;background:var(--soft);border-radius:999px;padding:4px 12px;font-size:14px;color:var(--muted)}
+.ans{min-height:64px;border-bottom:3px solid var(--red);display:flex;flex-wrap:wrap;gap:6px;align-items:center;padding:8px 0;margin:10px 0}
+.pool{display:flex;flex-wrap:wrap;gap:8px}
+.chipw{font-size:22px;padding:6px 14px;border-width:2px;border-radius:10px}
+.chipw:disabled{opacity:.25}
+.fixs{display:flex;flex-wrap:wrap;align-items:center;gap:2px}
+.fc{font-size:30px;min-height:56px;min-width:46px;padding:2px 6px;border-color:transparent;background:transparent}
+.fc:hover:not(:disabled){background:var(--soft)}.fc.ok{background:var(--okbg);border-color:var(--ok)}.fc.bad{background:var(--badbg);border-color:var(--red)}
+.gopt{font-size:24px;min-height:64px}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+</head>
+<body>
+<header class="cover band">
+  <div class="wrap">
+    <h1>EZ华文 · 小学华文复习<small id="hello">小一至小六 · 认读、写字、阅读</small></h1>
+    <div class="chips">
+      <button class="chip" id="chipHome">首页</button>
+      <button class="chip" id="chipHero">我的英雄</button>
+      <button class="chip" id="chipReview">复习本 0</button>
+      <button class="chip" id="chipProg">我的进度</button>
+    </div>
+  </div>
+</header>
+<div id="warn"></div>
+<main class="band"><div class="wrap" id="app"></div></main>
+
+<script>window.EZ={levels:{},dict:{},ctx:{}}</script>
+<script src="ez-dict.js"></script>
+<script src="ez-1A.js"></script>
+<script src="ez-1B.js"></script>
+<script src="ez-2A.js"></script>
+<script src="ez-2B.js"></script>
+<script src="ez-3A.js"></script>
+<script src="ez-3B.js"></script>
+<script src="ez-4A.js"></script>
+<script src="ez-4B.js"></script>
+<script src="ez-5A.js"></script>
+<script src="ez-5B.js"></script>
+<script src="ez-6A.js"></script>
+<script src="ez-6B.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/hanzi-writer@3.7.3/dist/hanzi-writer.min.js"></script>
+<script>
+{
+/* ================= data ================= */
+const LEVELS=[['1A','一上'],['1B','一下'],['2A','二上'],['2B','二下'],['3A','三上'],['3B','三下'],['4A','四上'],['4B','四下'],['5A','五上'],['5B','五下'],['6A','六上'],['6B','六下']].map(([id,name],k)=>({id,name,k}));
+const CONTENT=EZ.levels;
+const DICT={};for(const [c,v] of Object.entries(EZ.dict))DICT[c]={py:v[0],en:v[1]};
+for(const C of Object.values(CONTENT)){C.fill=C.fill.map(([l,q,a,o,en])=>({l,q,a,o:[...o],en}))}
+const MON_NAMES=['糊涂虫','乱笔怪','忘字妖','墨点精','歪歪兽','偷字鼠','瞌睡怪','倒写怪','迷路妖','吵闹精','马虎龟','多笔怪','少笔妖','拖拉熊','粗心猴','漏字鸟','发呆蛙','涂改怪','打嗝兽','喷墨鱼','黏黏怪','咕噜怪','啰嗦妖','捣蛋鬼','迷糊猫','翻页虫','乱叫鸡','慢吞吞','跳格怪','反字精'];
+const BOSS_NAMES=['大雾王','乌云王','迷宫王','黑墨王','狂风王','冰冻王','打雷王','沙尘王','暗影王','石头王','火焰王','海浪王'];
+const HEROES={mo:{name:'墨墨',desc:'一滴会写字的墨水'},zhi:{name:'纸纸',desc:'用作业纸折成的纸鹤'},shi:{name:'狮狮',desc:'爱打鼓的小醒狮'}};
+const GEAR=[['brush','神笔',6,'攻击 +4'],['shield','砚台盾',15,'多一颗心'],['gold','金墨',30,'答对 2 题就连击'],['cape','飞天披风',50,'每场挡住一次攻击']];
+const BADGES=[['first','第一颗星'],['streak3','连续学习三天'],['lv1A','一上完成'],['clear','清空复习本'],['boss','打败第一个大王']];
+
+/* ================= state ================= */
+const KEY='ez-cl-v1';let canStore=true;
+const blank=()=>({v:1,name:'',stars:{},best:{},review:{},streak:{last:'',n:0},badges:[],log:[],hadReview:0,hero:{type:'',xp:0,won:[]},set:{py:true,en:false,battle:true}});
+let S;
+try{const o=JSON.parse(localStorage.getItem(KEY))||{};S={...blank(),...o};S.hero={...blank().hero,...(o.hero||{})};S.set={...blank().set,...(o.set||{})}}catch(e){canStore=false;S=blank()}
+const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){canStore=false;showWarn()}};
+const showWarn=()=>{document.getElementById('warn').innerHTML=canStore?'':'<div class="banner">这个浏览器不能自动保存进度。做完练习后，请到“我的进度”复制进度码。</div>'};
+showWarn();
+
+/* ================= helpers ================= */
+const $=s=>document.querySelector(s);
+const app=$('#app');
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const shuffle=a=>{a=[...a];for(let i=a.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]]}return a};
+const today=()=>new Date().toLocaleDateString('en-CA');
+const yesterday=()=>new Date(Date.now()-864e5).toLocaleDateString('en-CA');
+const starsOf=p=>p>=.9?3:p>=.7?2:p>=.5?1:0;
+const starHtml=n=>`<span class="stars" aria-label="${n} 颗星">${'★'.repeat(n)}<span class="e">${'★'.repeat(3-n)}</span></span>`;
+const isHan=c=>/[一-鿿]/.test(c);
+const lvName=id=>LEVELS.find(l=>l.id===id).name;
+const lvIdx=id=>LEVELS.find(l=>l.id===id).k;
+const py=c=>(DICT[c]||{}).py||'';
+const en=c=>(DICT[c]||{}).en||'';
+const tone=p=>/[āēīōūǖ]/.test(p)?1:/[áéíóúǘ]/.test(p)?2:/[ǎěǐǒǔǚ]/.test(p)?3:/[àèìòùǜ]/.test(p)?4:0;
+function rubyLine(s){const cs=[...s];return cs.map((c,i)=>{if(!isHan(c))return c==='＿'?'<span class="blank">　</span>':esc(c);let p=py(c);const nx=cs[i+1];
+  if(c==='一'&&nx&&isHan(nx))p=tone(py(nx))===4?'yí':'yì';if(c==='不'&&nx&&tone(py(nx))===4)p='bú';return p?`<ruby>${c}<rt>${p}</rt></ruby>`:c}).join('')}
+const canSpeak='speechSynthesis' in window;
+let voices=[];const loadV=()=>{try{voices=speechSynthesis.getVoices()||[]}catch(e){}};
+if(canSpeak){loadV();try{speechSynthesis.addEventListener('voiceschanged',loadV)}catch(e){}}
+function pickVoice(){const z=voices.filter(v=>/^zh/i.test(v.lang)&&!/HK|yue|TW/i.test(v.lang));return z.find(v=>/zh[-_]CN/i.test(v.lang))||z[0]||null}
+let heard=false,tipShown=false;
+function soundTip(){if(heard||tipShown)return;tipShown=true;const d=document.createElement('div');d.className='toast';d.setAttribute('role','status');
+  d.innerHTML='听不到声音吗？<br>iPhone / iPad：把侧边的静音开关拨回响铃，再调高音量。<br>如果还是没有声音，请到“设置 › 辅助功能 › 朗读内容 › 声音”下载“中文（中国大陆）”的声音。<button type="button">知道了</button>';
+  d.querySelector('button').onclick=()=>d.remove();document.body.appendChild(d);setTimeout(()=>d.remove(),15000)}
+function say(t){if(!canSpeak)return;try{loadV();
+  const go=()=>{const u=new SpeechSynthesisUtterance(t);u.lang='zh-CN';const v=pickVoice();if(v)u.voice=v;u.rate=.8;u.onstart=()=>{heard=true};u.onerror=()=>soundTip();speechSynthesis.speak(u);setTimeout(()=>{if(!heard)soundTip()},2500)};
+  if(speechSynthesis.speaking||speechSynthesis.pending){speechSynthesis.cancel();setTimeout(go,150)}else go();
+  if(speechSynthesis.paused)speechSynthesis.resume()}catch(e){soundTip()}}
+const sayBtn=(t,l='听一听')=>canSpeak?`<button class="say" type="button" data-say="${esc(t)}">${l}</button>`:'';
+app.addEventListener('click',e=>{const b=e.target.closest('[data-say]');if(b)say(b.dataset.say)});
+function bump(el,cls){if(!el)return;el.classList.remove(cls);void el.offsetWidth;el.classList.add(cls)}
+
+/* ================= pictures (original characters) ================= */
+function heroSVG(type,gear){
+  const g=gear||[];let s='<svg viewBox="0 0 120 120" aria-hidden="true">';
+  if(g.includes('gold'))s+='<circle cx="60" cy="66" r="56" fill="#f6d36b" opacity=".35"/>';
+  if(g.includes('cape'))s+='<path d="M30 66Q60 40 90 66L104 116H16Z" fill="#b8322b"/>';
+  if(type==='zhi'){
+    s+='<path d="M20 70L2 46L36 60Z" fill="#fff" stroke="#c9c2b0" stroke-width="2"/><path d="M100 70L118 46L84 60Z" fill="#fff" stroke="#c9c2b0" stroke-width="2"/>'
+    +'<path d="M60 20L100 70L60 110L20 70Z" fill="#f7f4ec" stroke="#c9c2b0" stroke-width="2"/><path d="M60 20V110M20 70H100" stroke="#e2dccb" stroke-width="2"/>'
+    +'<path d="M60 20L72 4L64 26Z" fill="#cf3e35"/><circle cx="50" cy="62" r="5" fill="#222"/><circle cx="70" cy="62" r="5" fill="#222"/><circle cx="51.5" cy="60.5" r="1.6" fill="#fff"/><circle cx="71.5" cy="60.5" r="1.6" fill="#fff"/>'
+    +'<circle cx="42" cy="76" r="4" fill="#f29b95"/><circle cx="78" cy="76" r="4" fill="#f29b95"/><path d="M54 78q6 6 12 0" stroke="#222" stroke-width="2.5" fill="none" stroke-linecap="round"/>';
+  }else if(type==='shi'){
+    for(let i=0;i<14;i++){const a=i/14*Math.PI*2;s+=`<circle cx="${(60+Math.cos(a)*38).toFixed(1)}" cy="${(68+Math.sin(a)*38).toFixed(1)}" r="14" fill="#e0702c"/>`}
+    s+='<circle cx="60" cy="68" r="36" fill="#f6c64a"/><path d="M38 52q8-8 16 0M66 52q8-8 16 0" stroke="#7a3b12" stroke-width="5" fill="none" stroke-linecap="round"/>'
+    +'<circle cx="47" cy="64" r="8" fill="#fff"/><circle cx="73" cy="64" r="8" fill="#fff"/><circle cx="48" cy="65" r="4" fill="#222"/><circle cx="74" cy="65" r="4" fill="#222"/>'
+    +'<ellipse cx="60" cy="78" rx="8" ry="6" fill="#cf3e35"/><path d="M48 90q12 10 24 0" stroke="#7a3b12" stroke-width="3" fill="#fff"/><circle cx="60" cy="38" r="5" fill="#cf3e35"/>';
+  }else{
+    s+='<path d="M60 8C60 8 99 56 99 78A39 39 0 0 1 21 78C21 56 60 8 60 8Z" fill="#2b3f66"/><ellipse cx="44" cy="58" rx="7" ry="12" fill="#fff" opacity=".22"/>'
+    +'<circle cx="48" cy="78" r="9" fill="#fff"/><circle cx="72" cy="78" r="9" fill="#fff"/><circle cx="50" cy="80" r="4.5" fill="#111"/><circle cx="74" cy="80" r="4.5" fill="#111"/>'
+    +'<circle cx="39" cy="93" r="4" fill="#f08a8a" opacity=".85"/><circle cx="81" cy="93" r="4" fill="#f08a8a" opacity=".85"/><path d="M54 95q6 6 12 0" stroke="#fff" stroke-width="3" fill="none" stroke-linecap="round"/>';
+  }
+  if(g.includes('brush'))s+='<line x1="96" y1="100" x2="116" y2="58" stroke="#8a5a2b" stroke-width="5" stroke-linecap="round"/><path d="M96 100l-7 13 11-6z" fill="#111"/>';
+  if(g.includes('shield'))s+='<circle cx="14" cy="94" r="14" fill="#5b4535" stroke="#d9b45a" stroke-width="3"/><text x="14" y="99" text-anchor="middle" font-size="13" fill="#f3e3b5" font-family="serif">砚</text>';
+  return s+'</svg>';
+}
+function monsterSVG(seed,hue,boss){
+  let x=seed*9301+49297;const r=()=>(x=(x*9301+49297)%233280)/233280;
+  const body=`hsl(${hue} 52% 52%)`,dark=`hsl(${hue} 50% 32%)`,belly=`hsl(${hue} 60% 76%)`;
+  const shape=seed%3;let s='<svg viewBox="0 0 120 120" aria-hidden="true">';
+  if(r()>.35)s+=`<path d="M36 34L26 8L50 28ZM84 34L94 8L70 28Z" fill="${dark}"/>`;
+  s+=`<ellipse cx="18" cy="74" rx="9" ry="14" fill="${dark}"/><ellipse cx="102" cy="74" rx="9" ry="14" fill="${dark}"/>`;
+  s+=shape===0?`<path d="M20 92C12 52 34 22 60 22S108 52 100 92C96 110 24 110 20 92Z" fill="${body}"/>`
+    :shape===1?`<path d="M60 16C78 16 82 40 92 60C106 88 92 110 60 110S14 88 28 60C38 40 42 16 60 16Z" fill="${body}"/>`
+    :`<rect x="18" y="26" width="84" height="82" rx="28" fill="${body}"/>`;
+  s+=`<ellipse cx="60" cy="88" rx="26" ry="15" fill="${belly}"/>`;
+  const ne=1+Math.floor(r()*3);const E=ne===1?[[60,56,13]]:ne===2?[[46,56,10],[74,56,10]]:[[40,58,8],[60,46,8],[80,58,8]];
+  E.forEach(([cx,cy,rr])=>{s+=`<circle cx="${cx}" cy="${cy}" r="${rr}" fill="#fff"/><circle cx="${cx+rr*.25}" cy="${cy+rr*.15}" r="${rr*.48}" fill="#1b1b1b"/>`});
+  s+=`<path d="M44 76Q60 88 76 76Z" fill="${dark}"/><path d="M50 78l3 5 3-4M64 78l3 4 3-5" fill="#fff"/>`;
+  if(boss)s+='<path d="M38 26l6-18 9 12 7-16 7 16 9-12 6 18z" fill="#e9b949" stroke="#a57712" stroke-width="2"/>';
+  return s+'</svg>';
+}
+const monFor=(lv,i)=>({name:MON_NAMES[(lvIdx(lv)*7+i)%MON_NAMES.length],svg:monsterSVG(i+1+lvIdx(lv)*11,(lvIdx(lv)*36+i*29)%360,false)});
+const gramMon=lv=>({name:['语法怪','病句妖','乱序兽','标点精'][lvIdx(lv)%4],svg:monsterSVG(80+lvIdx(lv)*5,(lvIdx(lv)*36+120)%360,false)});
+const bossFor=(lv,i)=>({name:BOSS_NAMES[(lvIdx(lv)*2+i)%BOSS_NAMES.length],svg:monsterSVG(i+5+lvIdx(lv)*7,(lvIdx(lv)*36+200+i*40)%360,true)});
+
+/* ================= hero stats ================= */
+const totalStars=()=>Object.values(S.stars).reduce((a,b)=>a+b,0);
+const gearOwned=()=>GEAR.filter(g=>totalStars()>=g[2]).map(g=>g[0]);
+const xpFor=n=>40*n*(n-1);
+const heroLv=()=>{let n=1;while(xpFor(n+1)<=S.hero.xp)n++;return n};
+const heroAtk=()=>10+2*(heroLv()-1)+(gearOwned().includes('brush')?4:0);
+const heroHearts=()=>3+(gearOwned().includes('shield')?1:0);
+const comboAt=()=>gearOwned().includes('gold')?2:3;
+
+/* ================= progress ================= */
+function actList(lv){const C=CONTENT[lv],a=[];C.lessons.forEach((l,i)=>{a.push({id:`${lv}|${i}|r`,kind:'r',lv,i,label:`${l.n} · 认读`});a.push({id:`${lv}|${i}|w`,kind:'w',lv,i,label:`${l.n} · 写字`})});if(C.grammar&&C.grammar.length)a.push({id:`${lv}|g`,kind:'g',lv,i:0,label:'语文应用'});C.passages.forEach((p,i)=>a.push({id:`${lv}|p${i}`,kind:'p',lv,i,label:`阅读：${p.title}`}));return a}
+function levelPct(lv){if(!CONTENT[lv])return 0;const a=actList(lv);return a.reduce((s,x)=>s+(S.stars[x.id]||0),0)/(a.length*3)}
+function skillStats(){const r={r:[0,0,0],w:[0,0,0],p:[0,0,0],g:[0,0,0]};for(const lv in CONTENT)for(const x of actList(lv)){const t=r[x.kind];t[1]++;if(x.id in S.best){t[0]+=S.best[x.id];t[2]++}}return r}
+let newBadge=null;
+function record(id,pct){
+  S.best[id]=Math.max(S.best[id]||0,pct);
+  S.stars[id]=Math.max(S.stars[id]||0,starsOf(pct));
+  S.log.push({d:today(),a:id,s:Math.round(pct*100)});if(S.log.length>300)S.log=S.log.slice(-300);
+  const t=today();if(S.streak.last!==t){S.streak.n=S.streak.last===yesterday()?S.streak.n+1:1;S.streak.last=t}
+  checkBadges();save();chips();
+}
+function checkBadges(){
+  const add=k=>{if(!S.badges.includes(k)){S.badges.push(k);newBadge=k}};
+  if(Object.values(S.stars).some(n=>n>0))add('first');
+  if(S.streak.n>=3)add('streak3');
+  for(const lv in CONTENT)if(actList(lv).every(x=>(S.stars[x.id]||0)>=1))add('lv'+lv);
+  if(S.hero.won.some(w=>w.includes('|p')))add('boss');
+  const n=Object.keys(S.review).length;S.hadReview=Math.max(S.hadReview,n);
+  if(n===0&&S.hadReview>=3)add('clear');
+}
+function missed(c,lv,k){const o=S.review[c];S.review[c]={lv,k:o&&o.k==='w'?'w':k,n:0}}
+function hit(c){const r=S.review[c];if(r){r.n++;if(r.n>=2)delete S.review[c]}}
+function chips(){
+  $('#chipReview').textContent=`复习本 ${Object.keys(S.review).length}`;
+  $('#chipHero').textContent=S.hero.type?`${HEROES[S.hero.type].name} Lv${heroLv()}`:'我的英雄';
+  const st=S.streak.last===today()||S.streak.last===yesterday()?S.streak.n:0;
+  $('#hello').textContent=(S.name?`${S.name}，欢迎回来`:'小一至小六')+(st?` · 连续学习 ${st} 天`:' · 认读、写字、阅读');
+}
+$('#chipHome').onclick=()=>go('home');$('#chipProg').onclick=()=>go('progress');
+$('#chipReview').onclick=()=>startReview();$('#chipHero').onclick=()=>go('hero');
+
+/* ================= recommendation ================= */
+function nextStep(){
+  const rv=Object.keys(S.review).length;
+  if(rv>=6)return{t:`复习本里有 ${rv} 个字`,d:'先把不熟的字练熟，再往前走。',btn:'开始复习',go:startReview};
+  const last=[...S.log].reverse().find(l=>l.a.includes('|'));const start=last?lvIdx(last.a.split('|')[0]):0;
+  for(const L of LEVELS.slice(start)){if(!CONTENT[L.id])continue;
+    for(const x of actList(L.id)){const s=S.stars[x.id];if((s||0)<2)return{lv:L.id,t:`${L.name} · ${x.label}`,d:s===undefined?(x.kind==='p'?`大王“${bossFor(x.lv,x.i).name}”在等你。`:x.kind==='g'?`“${gramMon(x.lv).name}”在语文应用里等你。`:`怪物“${monFor(x.lv,x.i).name}”在这一课。`):`上次 ${s} 颗星，再做一次争取两颗星以上。`,btn:'出发',go:()=>startAct(x)}}}
+  if(rv)return{t:`复习本里有 ${rv} 个字`,d:'把剩下的字复习完吧。',btn:'开始复习',go:startReview};
+  return{t:'已开放的级别都拿到两颗星以上',d:'下一级制作中。你可以回去争取三颗星。',btn:null};
+}
+
+/* ================= views ================= */
+let writer=null;
+function stopWriter(){if(writer){try{writer.cancelQuiz()}catch(e){}writer=null}}
+function go(v){stopWriter();if(location.hash==='#'+v)render();else location.hash=v}
+window.addEventListener('hashchange',()=>{stopWriter();render()});
+function render(){
+  window.scrollTo(0,0);
+  const h=location.hash.slice(1)||'home';
+  if(!S.name||!S.hero.type)return viewStart();
+  if(h==='progress')return viewProgress();
+  if(h==='hero')return viewHero();
+  if(h.startsWith('level-')){const id=h.slice(6).toUpperCase();if(CONTENT[id])return viewLevel(id)}
+  viewHome();
+}
+
+function viewStart(){
+  let pick=S.hero.type||'mo';
+  app.innerHTML=`<div class="stage"><h2>欢迎！先做两件事</h2>
+   <div class="card"><h3>1. 写上你的名字</h3><p class="note" style="margin-top:0">名字只保存在这台电脑或平板上。</p>
+    <input type="text" id="nm" maxlength="20" placeholder="例如：林小慧" autocomplete="off" value="${esc(S.name)}"></div>
+   <div class="card" style="margin-top:14px"><h3>2. 选一个英雄</h3><p class="note" style="margin-top:0">答对题目，英雄就会攻击怪物。英雄会升级，还能拿到新装备。</p>
+    <div class="heroes">${Object.entries(HEROES).map(([k,h])=>`<button type="button" data-h="${k}" aria-pressed="${k===pick}">${heroSVG(k,[])}<b>${h.name}</b><span class="note">${h.desc}</span></button>`).join('')}</div></div>
+   <div class="row" style="margin-top:16px"><button class="pri" id="go">开始冒险</button><span id="m" class="note"></span></div>
+   <p class="note">已经在别的电脑做过？先开始，再到“我的进度”贴上进度码。</p></div>`;
+  app.querySelectorAll('[data-h]').forEach(b=>b.onclick=()=>{pick=b.dataset.h;app.querySelectorAll('[data-h]').forEach(x=>x.setAttribute('aria-pressed',String(x===b)))});
+  $('#go').onclick=()=>{const v=$('#nm').value.trim();if(!v){$('#m').textContent='请先写上名字。';$('#nm').focus();return}S.name=v;S.hero.type=pick;save();chips();go('home')};
+}
+
+function heroCard(full){
+  const lv=heroLv(),xp=S.hero.xp,a=xpFor(lv),b=xpFor(lv+1),g=gearOwned(),ts=totalStars();
+  return `<div class="hero-card">${heroSVG(S.hero.type,g)}<div><div class="nm">${HEROES[S.hero.type].name} <span class="muted" style="font-size:16px">Lv ${lv}</span></div>
+   <div class="meter xp" title="经验值"><i style="width:${Math.round((xp-a)/(b-a)*100)}%"></i></div><div class="note">经验 ${xp-a} / ${b-a}，升到 Lv ${lv+1}</div>
+   <div class="stat"><span>攻击 ${heroAtk()}</span><span>生命 ${'♥'.repeat(heroHearts())}</span><span>打败怪物 ${S.hero.won.length}</span></div></div></div>
+   <div class="gear">${GEAR.map(([k,n,need,d])=>`<span class="${g.includes(k)?'got':''}" title="${d}">${g.includes(k)?n+' · '+d:`${n} · ★${need} 解锁`}</span>`).join('')}</div>
+   ${full?'':`<p class="note" style="margin:10px 0 0">你有 ${ts} 颗星。星星越多，装备越强。</p>`}`;
+}
+
+function viewHome(){
+  const nx=nextStep(),st=skillStats();
+  const pc=t=>t[2]?Math.round(t[0]/t[2]*100):0;
+  app.innerHTML=`<div class="home">
+   <section><h2>选一个级别</h2>
+    <div class="map">${LEVELS.map(L=>{const ok=!!CONTENT[L.id],p=levelPct(L.id);return `<button class="cell kai ${ok?'':'off'} ${nx.lv===L.id?'next':''}" ${ok?`data-lv="${L.id}"`:'disabled'} aria-label="${L.name}">
+      <span class="fill" style="height:${Math.round(p*100)}%"></span><b>${L.name}</b><span>${ok?Math.round(p*100)+'%':'制作中'}</span></button>`}).join('')}</div>
+    <p class="note">从小一到小六，越往后越难。你可以选任何一个已开放的级别。格子填满表示拿到了全部星星。</p>
+    <div class="card next-card" style="margin-top:18px"><span class="muted">下一步</span><div class="t">${esc(nx.t)}</div><p class="muted" style="margin:0 0 12px">${esc(nx.d)}</p>${nx.btn?`<button class="pri" id="nxBtn">${nx.btn}</button>`:''}</div>
+   </section>
+   <aside style="display:grid;gap:16px;align-content:start">
+    ${S.set.battle?`<div class="card">${heroCard()}</div>`:''}
+    <div class="card"><h3>我的能力</h3>
+     ${[['认读',st.r],['写字',st.w],['阅读',st.p],['语文应用',st.g]].map(([n,t])=>`<div class="skill"><span>${n}</span><span class="meter"><i style="width:${pc(t)}%"></i></span><em>${t[2]?pc(t)+'%':'—'}</em></div>`).join('')}
+     <p class="note">按你做过的练习的最好成绩计算。</p></div>
+   </aside></div>`;
+  app.querySelectorAll('[data-lv]').forEach(b=>b.onclick=()=>go('level-'+b.dataset.lv.toLowerCase()));
+  if(nx.btn)$('#nxBtn').onclick=nx.go;
+}
+
+function viewLevel(lv){
+  const C=CONTENT[lv];const won=S.hero.won;const bt=S.set.battle;
+  const mini=(id,m)=>bt?`<span class="mini ${won.includes(id)?'':'sil'}" title="${won.includes(id)?m.name:'还没打败'}">${m.svg}</span>`:'<span></span>';
+  app.innerHTML=`<div class="row" style="justify-content:space-between;margin-bottom:10px"><h2 style="margin:0" class="kai">${lvName(lv)}</h2><button class="ghost" id="back">← 返回级别</button></div>
+   <p class="muted" style="margin-top:0">认读：看拼音或句子选字。写字：在田字格里按笔顺写字。拿到两颗星以上就算掌握。${bt?'每一课有一只怪物，每篇阅读有一个大王。':''}</p>
+   <div class="lessons">${C.lessons.map((l,i)=>`<div class="lesson">${mini(`${lv}|${i}`,monFor(lv,i))}<strong>${l.n}</strong><span class="chars kai">${l.read}</span>
+     ${['r','w'].map(k=>{const id=`${lv}|${i}|${k}`,s=S.stars[id];return `<div class="act">${s===undefined?'<span class="note">未做</span>':starHtml(s)}<button data-a="${id}">${k==='r'?'认读':'写字'}</button></div>`}).join('')}</div>`).join('')}</div>
+   ${C.grammar&&C.grammar.length?`<h2 style="margin-top:28px">语文应用</h2>
+   <div class="lessons"><div class="lesson">${mini(`${lv}|g`,gramMon(lv))}<strong>语法练习</strong><span>${[...new Set(C.grammar.map(g=>g.topic))].join('、')}<span class="note">（${C.grammar.length} 题）</span></span><span></span><div class="act">${S.stars[`${lv}|g`]===undefined?'<span class="note">未做</span>':starHtml(S.stars[`${lv}|g`])}<button data-a="${lv}|g">开始</button></div></div></div>`:''}
+   <h2 style="margin-top:28px">阅读理解</h2>
+   <div class="lessons">${C.passages.map((p,i)=>{const id=`${lv}|p${i}`,s=S.stars[id];return `<div class="lesson">${mini(`${lv}|p${i}`,bossFor(lv,i))}<strong>阅读 ${i+1}</strong><span>《${p.title}》<span class="note">（${p.covers}）</span></span><span></span><div class="act">${s===undefined?'<span class="note">未做</span>':starHtml(s)}<button data-a="${id}">开始</button></div></div>`}).join('')}</div>
+   <p class="note" style="margin-top:16px">阅读文中的人物都是虚构的。</p>`;
+  $('#back').onclick=()=>go('home');
+  app.querySelectorAll('[data-a]').forEach(b=>b.onclick=()=>startAct(actList(lv).find(x=>x.id===b.dataset.a)));
+}
+
+function viewHero(){
+  const all=[];for(const L of LEVELS){if(!CONTENT[L.id])continue;CONTENT[L.id].lessons.forEach((l,i)=>all.push([`${L.id}|${i}`,monFor(L.id,i),`${L.name} ${l.n}`]));if(CONTENT[L.id].grammar&&CONTENT[L.id].grammar.length)all.push([`${L.id}|g`,gramMon(L.id),`${L.name} 语文应用`]);CONTENT[L.id].passages.forEach((p,i)=>all.push([`${L.id}|p${i}`,bossFor(L.id,i),`${L.name} 阅读${i+1}`]))}
+  app.innerHTML=`<div class="row" style="justify-content:space-between"><h2 style="margin:0">我的英雄</h2><button class="ghost" id="back">← 返回</button></div>
+   <div class="home" style="margin-top:14px"><div class="card">${heroCard(true)}
+     <h3 style="margin-top:18px">怎么变强？</h3>
+     <ul class="muted" style="margin:0;padding-left:20px"><li>答对一题得 10 点经验，打败怪物多得 25 点。经验够了就升级，攻击力变高。</li><li>星星越多，解锁的装备越多。</li><li>连续答对 ${comboAt()} 题就会“连击”，伤害多一半。</li><li>用了提示，攻击力减半。</li></ul></div>
+    <div class="card set"><h3>换英雄</h3><div class="heroes">${Object.entries(HEROES).map(([k,h])=>`<button type="button" data-h="${k}" aria-pressed="${k===S.hero.type}">${heroSVG(k,[])}<b>${h.name}</b></button>`).join('')}</div>
+     <h3 style="margin-top:18px">战斗模式</h3><label><input type="checkbox" id="bt" ${S.set.battle?'checked':''}> 做练习时显示英雄和怪物</label><p class="note" style="margin:0">关掉后，练习和计分完全一样，只是不显示战斗。</p></div></div>
+   <h2 style="margin-top:28px">怪物图鉴 <span class="muted" style="font-size:16px">${S.hero.won.length} / ${all.length}</span></h2>
+   <div class="dex">${all.map(([id,m,where])=>{const w=S.hero.won.includes(id);return `<div class="${w?'':'sil'}">${m.svg}<div><b>${w?m.name:'？？？'}</b></div><div class="note">${where}</div></div>`}).join('')}</div>`;
+  $('#back').onclick=()=>go('home');
+  app.querySelectorAll('[data-h]').forEach(b=>b.onclick=()=>{S.hero.type=b.dataset.h;save();chips();viewHero()});
+  $('#bt').onchange=e=>{S.set.battle=e.target.checked;save()};
+}
+
+function viewProgress(){
+  const rv=Object.entries(S.review);const st=skillStats();
+  const pcs=Object.entries(st).map(([k,t])=>[k,t[2]?t[0]/t[2]:null]).filter(x=>x[1]!==null).sort((a,b)=>a[1]-b[1]);
+  const weak=pcs.length>1?{r:'认读',w:'写字',p:'阅读',g:'语文应用'}[pcs[0][0]]:null;
+  app.innerHTML=`<div class="row" style="justify-content:space-between"><h2 style="margin:0">${esc(S.name||'我')}的进度</h2><button class="ghost" id="back">← 返回</button></div>
+   ${weak?`<p>最需要加强的是 <strong>${weak}</strong>。</p>`:'<p class="muted">多做几个练习，这里会告诉你哪一方面最需要加强。</p>'}
+   <div class="scroll"><table><thead><tr><th>级别</th><th class="num">认读</th><th class="num">写字</th><th class="num">阅读</th><th class="num">语文应用</th><th class="num">星星</th></tr></thead><tbody>
+   ${LEVELS.filter(L=>CONTENT[L.id]).map(L=>{const a=actList(L.id);const f=k=>{const xs=a.filter(x=>x.kind===k&&x.id in S.best);return xs.length?Math.round(xs.reduce((s,x)=>s+S.best[x.id],0)/xs.length*100)+'%':'—'};const got=a.reduce((s,x)=>s+(S.stars[x.id]||0),0);
+     return `<tr><td class="kai">${L.name}</td><td class="num">${f('r')}</td><td class="num">${f('w')}</td><td class="num">${f('p')}</td><td class="num">${f('g')}</td><td class="num">${got} / ${a.length*3}</td></tr>`}).join('')}
+   </tbody></table></div>
+   <h2 style="margin-top:28px">复习本</h2>
+   ${rv.length?`<p class="muted">做错的字会放在这里。连续答对两次，就会自动拿掉。</p><div class="revchars kai" style="justify-content:flex-start">${rv.map(([c])=>`<span>${c}</span>`).join('')}</div><button class="pri" id="rvBtn">开始复习</button>`:'<p class="muted">复习本是空的。</p>'}
+   <h2 style="margin-top:28px">学习帮助</h2>
+   <div class="card set"><label><input type="checkbox" id="sPy" ${S.set.py?'checked':''}> 题目和短文先显示汉语拼音</label>
+    <label><input type="checkbox" id="sEn" ${S.set.en?'checked':''}> 显示英文翻译（短文、题目和写字）</label>
+    <p class="note" style="margin:0 0 6px">听不到“听一听”的声音？iPhone / iPad 请把侧边的静音开关拨回响铃，并调高音量。</p><p class="note" style="margin:0">做练习时也可以随时打开或关掉。认读题的“英文提示”一直都可以用，用了提示这一题只算半分。</p></div>
+   <h2 style="margin-top:28px">徽章</h2>
+   <div class="gear">${BADGES.map(([k,n])=>`<span class="${S.badges.includes(k)?'got':''}">${n}</span>`).join('')}</div>
+   <h2 style="margin-top:28px">进度码</h2>
+   <p class="muted">进度只保存在这台电脑或平板上。复制进度码，可以发给老师，或者在别的电脑上接着做。</p>
+   <div class="row"><button class="pri" id="cp">复制进度码</button><span id="cpm" class="note"></span></div>
+   <details style="margin-top:14px"><summary>在这里贴上进度码</summary>
+    <textarea id="code" rows="3" style="margin-top:10px" placeholder="EZ1-……"></textarea>
+    <div class="row" style="margin-top:8px"><button id="rs">恢复进度</button><span id="rsm" class="note"></span></div></details>
+   <details style="margin-top:14px"><summary>改名字</summary><div class="row" style="margin-top:10px"><input type="text" id="nm2" value="${esc(S.name)}" maxlength="20" style="flex:1"><button id="nmb">保存</button></div></details>`;
+  $('#back').onclick=()=>go('home');
+  if(rv.length)$('#rvBtn').onclick=startReview;
+  $('#sPy').onchange=e=>{S.set.py=e.target.checked;save()};$('#sEn').onchange=e=>{S.set.en=e.target.checked;save()};
+  $('#cp').onclick=async()=>{const c=makeCode();try{await navigator.clipboard.writeText(c);$('#cpm').textContent='已复制。'}catch(e){$('#code').value=c;$('#code').closest('details').open=true;$('#cpm').textContent='请手动复制下面的进度码。'}};
+  let armed=false;
+  $('#rs').onclick=()=>{const d=readCode($('#code').value);if(!d){$('#rsm').textContent='进度码不正确，请再检查。';return}
+    if(!armed){armed=true;$('#rsm').textContent=`这是“${d.name||'无名'}”的进度，会换掉现在的进度。再按一次确定。`;return}
+    S={...blank(),...d,hero:{...blank().hero,...(d.hero||{})},set:{...blank().set,...(d.set||{})}};save();chips();render()};
+  $('#nmb').onclick=()=>{const v=$('#nm2').value.trim();if(v){S.name=v;save();chips();render()}};
+}
+function makeCode(){const d={...S,log:S.log.slice(-80)};return 'EZ1-'+btoa(unescape(encodeURIComponent(JSON.stringify(d))))}
+function readCode(c){try{c=c.trim();if(!c.startsWith('EZ1-'))return null;const d=JSON.parse(decodeURIComponent(escape(atob(c.slice(4)))));return d&&d.v===1?d:null}catch(e){return null}}
+
+/* ================= battle ================= */
+function makeBattle(mon,monId,totalItems,boss){
+  if(!S.set.battle||!S.hero.type)return null;
+  const lvk=monId?lvIdx(monId.split('|')[0]):0;const max=Math.max(20,Math.round(totalItems*10*(.8+.04*lvk)));
+  return {mon,monId,boss,max,hp:max,hearts:heroHearts(),maxH:heroHearts(),combo:0,dodge:gearOwned().includes('cape'),xp:0,won:false,ko:false};
+}
+function arenaHTML(B){
+  return `<div class="arena" id="arena"><div class="bmsg" id="bmsg" aria-live="polite">${B.boss?'大王出现了！':'怪物出现了！'}</div>
+   <div class="fighter" id="fh"><div class="body">${heroSVG(S.hero.type,gearOwned())}</div><div class="tag">${HEROES[S.hero.type].name} Lv${heroLv()}</div><div class="hearts" id="hearts"></div></div>
+   <div class="vs" id="combo">VS</div>
+   <div class="fighter" id="fm"><div class="body">${B.mon.svg}</div><div class="tag">${B.mon.name}</div><div class="hp"><i id="hpbar" style="width:100%"></i></div></div></div>`;
+}
+function drawBattle(B){
+  const h=$('#hearts');if(h)h.innerHTML='♥'.repeat(Math.max(0,B.hearts))+`<span class="e">${'♥'.repeat(B.maxH-Math.max(0,B.hearts))}</span>`;
+  const hb=$('#hpbar');if(hb)hb.style.width=Math.max(0,B.hp/B.max*100)+'%';
+  const c=$('#combo');if(c)c.textContent=B.combo>=comboAt()?`连击 ×1.5`:'VS';
+}
+function floatDmg(side,txt,heal){const f=$(side);if(!f)return;const d=document.createElement('span');d.className='dmg'+(heal?' heal':'');d.textContent=txt;f.appendChild(d);setTimeout(()=>d.remove(),950)}
+function battleTurn(B,val){
+  if(!B)return;const msg=$('#bmsg');
+  if(val>0){B.xp+=Math.round(val*10);
+    if(B.ko){if(msg)msg.textContent='英雄在休息，答对了也有经验。';return}
+    if(val===1)B.combo++;else B.combo=0;
+    const mult=B.combo>=comboAt()?1.5:1;const dmg=Math.round(heroAtk()*val*mult);
+    if(B.won){if(msg)msg.textContent=`答对了！经验 +${Math.round(val*10)}`;drawBattle(B);return}
+    B.hp-=dmg;bump($('#fh .body'),'atkR');setTimeout(()=>{bump($('#fm .body'),'shake');floatDmg('#fm','-'+dmg)},220);
+    if(msg)msg.textContent=val<1?`用了提示，攻击减半：-${dmg}`:mult>1?`连击！-${dmg}`:`攻击！-${dmg}`;
+    if(B.hp<=0){B.won=true;setTimeout(()=>{$('#fm')?.classList.add('ko');if(msg)msg.textContent=`打败了${B.mon.name}！`},450)}
+  }else{B.combo=0;
+    if(B.won||B.ko){drawBattle(B);return}
+    bump($('#fm .body'),'atkL');
+    if(B.dodge){B.dodge=false;if(msg)msg.textContent='飞天披风挡住了攻击！';setTimeout(()=>floatDmg('#fh','挡住'),220)}
+    else{B.hearts--;setTimeout(()=>{bump($('#fh .body'),'shake');floatDmg('#fh','-♥')},220);
+      if(msg)msg.textContent=B.hearts>0?`${B.mon.name}反击了！小心。`:`${HEROES[S.hero.type].name}累倒了，先休息。继续答题还能拿星星和经验。`;
+      if(B.hearts<=0){B.ko=true;setTimeout(()=>$('#fh')?.classList.add('ko'),450)}}
+  }
+  setTimeout(()=>drawBattle(B),250);
+}
+function endBattle(B,lvBefore,gearBefore){
+  if(!B)return '';
+  let out='';const bonus=B.won?(B.boss?40:25):0;S.hero.xp+=B.xp+bonus;
+  if(B.won&&B.monId&&!S.hero.won.includes(B.monId))S.hero.won.push(B.monId);
+  checkBadges();save();chips();
+  out+=B.won?`<div class="reward">打败了 <b>${B.mon.name}</b>！经验 +${B.xp+bonus}</div>`:`<div class="reward">${B.mon.name}逃走了。经验 +${B.xp}。下次再来！</div>`;
+  const lv=heroLv();const tg=$('#fh .tag');if(tg)tg.textContent=`${HEROES[S.hero.type].name} Lv${lv}`;if(lv>lvBefore)out+=`<div class="reward">${HEROES[S.hero.type].name} 升到 <b>Lv ${lv}</b>！攻击 ${heroAtk()}</div>`;
+  gearOwned().filter(g=>!gearBefore.includes(g)).forEach(k=>{const g=GEAR.find(x=>x[0]===k);out+=`<div class="reward">新装备：<b>${g[1]}</b>（${g[3]}）</div>`});
+  return out;
+}
+
+/* ================= practice runner ================= */
+function readItems(lv,i){
+  const C=CONTENT[lv],L=C.lessons[i];
+  const fills=C.fill.filter(f=>f.l===i).map(f=>({type:'fill',lv,ch:f.a,q:f.q,en:f.en,opts:shuffle(f.o)}));
+  const pyItems=shuffle([...L.read]).slice(0,8).map(ch=>pyItem(lv,ch,L.read));
+  return shuffle([...pyItems,...fills]);
+}
+function pyItem(lv,ch,near){
+  const C=CONTENT[lv];const okd=c=>c!==ch&&py(c)&&py(c)!==py(ch);
+  const all=[...new Set(C.lessons.flatMap(l=>[...l.read]))];
+  const ds=[...new Set([...shuffle([...near].filter(okd)).slice(0,2),...shuffle(all.filter(okd))])].slice(0,3);
+  return {type:'py',lv,ch,opts:shuffle([ch,...ds])};
+}
+function grammarItems(lv){return shuffle(CONTENT[lv].grammar).map(g=>{let parts=null;if(g.t==='order'){parts=shuffle(g.parts);let n=0;while(parts.join('')===g.parts.join('')&&n++<20)parts=shuffle(g.parts)}return {type:'g',g,opts:g.t==='pick'?shuffle(g.o):null,parts}})}
+function writeItems(lv,i){return [...new Set(CONTENT[lv].lessons[i].write)].map(ch=>({type:'write',lv,ch}))}
+
+function startAct(x){
+  if(x.kind==='p')return startReading(x.lv,x.i);
+  if(x.kind==='g')return run({title:`${lvName(x.lv)} 语文应用`,items:grammarItems(x.lv),id:x.id,back:'level-'+x.lv.toLowerCase(),mon:gramMon(x.lv),monId:x.id});
+  const items=x.kind==='r'?readItems(x.lv,x.i):writeItems(x.lv,x.i);
+  run({title:`${lvName(x.lv)} ${x.label}`,items,id:x.id,back:'level-'+x.lv.toLowerCase(),mon:monFor(x.lv,x.i),monId:`${x.lv}|${x.i}`});
+}
+function startReview(){
+  stopWriter();
+  const rv=Object.entries(S.review);if(!rv.length){go('progress');return}
+  const items=shuffle(rv).slice(0,12).map(([c,r])=>r.k==='w'?{type:'write',lv:r.lv,ch:c}:pyItem(r.lv,c,''));
+  run({title:'复习本',items,id:null,back:'progress',mon:{name:'复习怪',svg:monsterSVG(99,280,false)},monId:null});
+}
+function leaveHash(){history.replaceState(null,'',location.pathname+location.search);window.scrollTo(0,0)}
+
+function run(R){
+  leaveHash();
+  R.k=0;R.score=0;R.wrong=[];R.wt=new Set();R.lv0=heroLv();R.g0=gearOwned();
+  const B=makeBattle(R.mon,R.monId,R.items.length,false);
+  app.innerHTML=`<div class="stage"><div class="topbar"><button class="ghost" id="quit">← 退出</button><span class="meter"><i id="pbar" style="width:0"></i></span><span class="note" id="pnum"></span></div>
+   <p class="muted" style="margin:8px 0 0">${esc(R.title)}</p>${B?arenaHTML(B):''}<div id="qa"></div></div>`;
+  if(B)drawBattle(B);
+  $('#quit').onclick=()=>go(R.back);
+  const next=()=>{stopWriter();R.k<R.items.length?show():finish()};
+  const done=(val,ch,lv,kind)=>{R.score+=val;if(val<1){if(!R.wrong.includes(ch))R.wrong.push(ch);missed(ch,lv,kind)}else hit(ch);save();battleTurn(B,val)};
+  const frame=inner=>{$('#pbar').style.width=R.k/R.items.length*100+'%';$('#pnum').textContent=`${R.k+1} / ${R.items.length}`;$('#qa').innerHTML=inner};
+  const nextBtn=()=>{const n=$('#nx');n.hidden=false;n.focus({preventScroll:true});n.onclick=next};
+  function show(){
+    const it=R.items[R.k];
+    if(it.type==='write')return showWrite(it);
+    if(it.type==='g')return showGrammar(it);
+    const prompt=it.type==='py'
+      ?`<div class="q">选出拼音是 <span class="big" style="color:var(--red)">${py(it.ch)}</span> 的字 ${sayBtn(it.ch)}</div>`
+      :`<div class="q kai">${S.set.py?rubyLine(it.q):esc(it.q).replace('＿','<span class="blank">　</span>')}</div><div class="row"><span class="muted">选出正确的字。</span>${sayBtn(it.q.replace('＿','，'),'听句子')}</div>`;
+    frame(`${prompt}<div class="opts" style="margin-top:12px">${it.opts.map(o=>`<button class="opt kai" data-o="${o}">${o}</button>`).join('')}</div>
+      <div class="row" style="margin-top:12px"><button id="hintB" class="say">英文提示</button></div><div id="hintT"></div>
+      <div class="fb" id="fb" aria-live="polite"></div><div class="row"><button class="pri" id="nx" hidden>下一题</button></div>`);
+    let hinted=false;
+    $('#hintB').onclick=()=>{hinted=true;$('#hintB').disabled=true;$('#hintT').innerHTML=`<div class="hintbox">${it.type==='py'?`意思：${esc(en(it.ch))}`:esc(it.en)}<span class="note">　（用了提示，这题算半分）</span></div>`};
+    app.querySelectorAll('.opt').forEach(b=>b.onclick=()=>{
+      app.querySelectorAll('.opt').forEach(x=>{x.disabled=true;if(x.dataset.o===it.ch)x.classList.add('ok')});$('#hintB').disabled=true;
+      const ok=b.dataset.o===it.ch;if(!ok)b.classList.add('bad');
+      const fb=$('#fb');fb.className='fb '+(ok?'ok':'bad');
+      fb.textContent=ok?(hinted?'答对了（用了提示，算半分）。':'答对了！'):`正确答案是“${it.ch}”（${py(it.ch)}，${en(it.ch)}）。已放进复习本。`;
+      done(ok?(hinted?.5:1):0,it.ch,it.lv,'r');R.k++;nextBtn();
+      if(ok&&it.type==='fill')say(it.q.replace('＿',it.ch));
+    });
+  }
+  function showGrammar(it){
+    const g=it.g;const sent=t=>S.set.py?rubyLine(t):esc(t).replace(/＿/g,'<span class="blank">　</span>');
+    const good=g.t==='pick'?g.q.replace(/＿+/,g.o[g.a]):g.t==='order'?g.ans[0]:g.s.replace(g.bad,g.right);
+    let body='';
+    if(g.t==='pick')body=`<div class="q kai">${sent(g.q)}</div><p class="muted" style="margin:0">选出最适合的答案。</p><div class="opts" style="margin-top:12px">${it.opts.map(o=>`<button class="opt gopt kai" data-o="${esc(o)}">${esc(o)}</button>`).join('')}</div>`;
+    else if(g.t==='order')body=`<p class="muted">按正确的次序点一点，组成一个完整的句子。点错了可以再点一下拿回来。</p><div class="ans kai" id="ans"></div><div class="pool kai" id="pool">${it.parts.map((p,i)=>`<button class="chipw" data-i="${i}">${esc(p)}</button>`).join('')}</div><div class="row" style="margin-top:12px"><button id="chk" class="pri" disabled>检查</button></div>`;
+    else body=`<p class="muted">这个句子里有一个错别字。找出来，点一下。</p><div class="q kai fixs">${[...g.s].map((c,i)=>isHan(c)?`<button class="fc" data-i="${i}">${c}</button>`:`<span>${esc(c)}</span>`).join('')}</div>`;
+    frame(`<div style="margin-top:12px"><span class="topic">${esc(g.topic)}</span></div>${body}
+      <div class="row" style="margin-top:12px"><button id="hintB" class="say">英文提示</button></div><div id="hintT"></div>
+      <div class="fb" id="fb" aria-live="polite"></div><div class="row"><button class="pri" id="nx" hidden>下一题</button></div>`);
+    let hinted=false,over=false;
+    $('#hintB').onclick=()=>{hinted=true;$('#hintB').disabled=true;$('#hintT').innerHTML=`<div class="hintbox">${esc(g.en)}<span class="note">　（用了提示，这题算半分）</span></div>`};
+    const end=ok=>{if(over)return;over=true;$('#hintB').disabled=true;const fb=$('#fb');fb.className='fb '+(ok?'ok':'bad');
+      fb.innerHTML=(ok?(hinted?'答对了（用了提示，算半分）。':'答对了！'):(g.t==='fix'?`错字是“${esc(g.bad)}”，应该改成“${esc(g.right)}”。`:'还不对。'))+`<div class="muted" style="font-weight:400">正确的句子：<span class="kai">${esc(good)}</span></div>`;
+      const val=ok?(hinted?.5:1):0;R.score+=val;if(val<1)R.wt.add(g.topic);save();battleTurn(B,val);R.k++;nextBtn();if(ok)say(good)};
+    if(g.t==='pick')app.querySelectorAll('.gopt').forEach(b=>b.onclick=()=>{const ok=b.dataset.o===g.o[g.a];app.querySelectorAll('.gopt').forEach(x=>{x.disabled=true;if(x.dataset.o===g.o[g.a])x.classList.add('ok')});if(!ok)b.classList.add('bad');end(ok)});
+    else if(g.t==='order'){const pick=[];const ans=$('#ans'),chk=$('#chk');
+      const draw=()=>{ans.innerHTML=pick.map((i,k)=>`<button class="chipw" data-k="${k}">${esc(it.parts[i])}</button>`).join('')||'<span class="note">点下面的词语</span>';
+        app.querySelectorAll('#pool .chipw').forEach(b=>b.disabled=over||pick.includes(+b.dataset.i));chk.disabled=over||pick.length!==it.parts.length;
+        ans.querySelectorAll('.chipw').forEach(b=>{b.disabled=over;b.onclick=()=>{pick.splice(+b.dataset.k,1);draw()}})};
+      app.querySelectorAll('#pool .chipw').forEach(b=>b.onclick=()=>{pick.push(+b.dataset.i);draw()});
+      chk.onclick=()=>{const ok=g.ans.includes(pick.map(i=>it.parts[i]).join(''));ans.style.borderColor=ok?'var(--ok)':'var(--red)';end(ok);draw()};draw()}
+    else{const bi=[...g.s].indexOf(g.bad);app.querySelectorAll('.fc').forEach(b=>b.onclick=()=>{const ok=+b.dataset.i===bi;app.querySelectorAll('.fc').forEach(x=>{x.disabled=true;if(+x.dataset.i===bi)x.classList.add('ok')});if(!ok)b.classList.add('bad');end(ok)})}
+  }
+  function showWrite(it){
+    const ctx=EZ.ctx[it.ch]||'＿';
+    frame(`<div class="cue" style="margin-top:8px"><div class="py">${py(it.ch)}</div><div class="ctx kai">${esc(ctx).replace('＿','<span class="blank">　</span>')}</div>
+      ${S.set.en?`<div class="en">意思：${esc(en(it.ch))}</div>`:''}${sayBtn(ctx.replace('＿',it.ch))}</div>
+     <div class="pad" id="pad"></div>
+     <div class="fb" id="fb" aria-live="polite" style="text-align:center">按正确的笔顺，一笔一笔写。</div>
+     <div class="row" style="justify-content:center"><button id="hint">提示字形</button><button id="anim">看笔顺</button><button class="ghost" id="skip">不会写</button><button class="pri" id="nx" hidden>下一个</button></div>
+     <p class="note" style="text-align:center">用了提示，这个字会放进复习本，下次再练。</p>`);
+    let mistakes=0,hinted=false,finished=false;const fb=$('#fb');
+    const finishChar=(val,msg)=>{if(finished)return;finished=true;done(val,it.ch,it.lv,'w');R.k++;fb.className='fb '+(val>=1?'ok':'bad');fb.textContent=msg;
+      ['hint','anim','skip'].forEach(id=>$('#'+id).disabled=true);nextBtn()};
+    if(!window.HanziWriter){fb.className='fb bad';fb.textContent='写字工具没有加载成功，请检查网络后再试。';$('#hint').disabled=$('#anim').disabled=true;$('#skip').textContent='跳过';
+      $('#skip').onclick=()=>{R.items.splice(R.k,1);R.items.length?(R.k<R.items.length?show():finish()):go(R.back)};return}
+    const pad=$('#pad');const size=pad.clientWidth;
+    const col=v=>{const t=document.createElement('i');t.style.color=`var(${v})`;pad.appendChild(t);const c=getComputedStyle(t).color;t.remove();return c};
+    writer=HanziWriter.create(pad,it.ch,{width:size,height:size,padding:Math.round(size*.06),showOutline:false,showCharacter:false,
+      strokeColor:col('--ink'),drawingColor:col('--ink'),outlineColor:col('--grid'),highlightColor:col('--red'),drawingWidth:Math.max(14,size/16),
+      charDataLoader:(c,ok,err)=>{import(`https://cdn.jsdelivr.net/npm/hanzi-writer-data@2.0.1/${encodeURIComponent(c)}.json/+esm`).then(m=>ok(m.default)).catch(e=>{fb.className='fb bad';fb.textContent='这个字的笔画资料加载不到，请按“不会写”跳过。';err(e)})}});
+    const w=writer;
+    const quiz=()=>w.quiz({leniency:1,showHintAfterMisses:3,
+      onMistake:()=>{mistakes++;fb.className='fb bad';fb.textContent=mistakes>=3?'这一笔不对。看看提示的位置再写。':'这一笔不对，再试试。'},
+      onCorrectStroke:d=>{fb.className='fb';fb.textContent=`第 ${d.strokeNum+1} 笔写对了。`},
+      onComplete:()=>{const val=hinted?0:mistakes<=1?1:mistakes<=4?.5:0;
+        finishChar(val,val===1?'写对了！':val===.5?`写完了，错了 ${mistakes} 次笔画。这个字放进复习本，下次再练。`:'写完了。这个字放进复习本，下次再练。')}});
+    quiz();
+    $('#hint').onclick=()=>{hinted=true;w.showOutline()};
+    $('#anim').onclick=()=>{hinted=true;w.cancelQuiz();w.animateCharacter({onComplete:()=>{if(!finished&&writer===w){w.hideCharacter();quiz()}}})};
+    $('#skip').onclick=()=>{try{w.cancelQuiz();w.showCharacter()}catch(e){}finishChar(0,`这个字是“${it.ch}”（${en(it.ch)}）。已放进复习本。`)};
+  }
+  function finish(){
+    const pct=R.items.length?R.score/R.items.length:0;const st=starsOf(pct);
+    if(R.id)record(R.id,pct);else{S.log.push({d:today(),a:'review',s:Math.round(pct*100)});checkBadges();save();chips()}
+    const rw=endBattle(B,R.lv0,R.g0);
+    const help=pct<.6&&(!S.set.py||!S.set.en);
+    app.innerHTML=`<div class="stage sum"><h2>${esc(R.title)} · 完成</h2>
+     ${R.id?starHtml(st):''}<p style="font-size:20px">答对 ${Math.round(R.score*10)/10} / ${R.items.length}</p>
+     ${rw?`<div>${rw}</div>`:''}
+     ${R.wt.size?`<p class="muted">需要多练习：${[...R.wt].map(esc).join('、')}</p>`:''}
+     ${R.items[0]&&R.items[0].type==='g'?'':R.wrong.length?`<p class="muted">这些字放进了复习本：</p><div class="revchars kai">${R.wrong.map(c=>`<span>${c}</span>`).join('')}</div>`:'<p class="muted">全部答对，没有新的字要复习。</p>'}
+     ${newBadge?`<p>新徽章：<span class="reward">${BADGES.find(b=>b[0]===newBadge)[1]}</span></p>`:''}
+     ${help?`<div class="card" style="text-align:left;margin:14px 0"><b>觉得有点难？</b> 可以打开拼音和英文帮助，再试一次。<div class="row" style="margin-top:8px"><button id="helpOn">打开帮助</button></div></div>`:''}
+     <div class="row" style="justify-content:center;margin-top:16px"><button id="again">再做一次</button><button class="pri" id="ret">返回</button></div></div>`;
+    newBadge=null;
+    if(help)$('#helpOn').onclick=e=>{S.set.py=true;S.set.en=true;save();e.target.textContent='已打开';e.target.disabled=true};
+    $('#again').onclick=()=>{R.id?startAct(actList(R.id.split('|')[0]).find(x=>x.id===R.id)):startReview()};
+    $('#ret').onclick=()=>go(R.back);
+  }
+  show();
+}
+
+/* ================= reading ================= */
+function passageHTML(p){
+  const pys=p.py.split(/\s+/);const n=[...p.text].filter(isHan).length;const useRuby=pys.length===n;let k=0,si=0;
+  return p.text.split('\n').map(par=>{const ens=[];const body=par.split('|').map(sen=>{const idx=si++;ens.push(p.ens[idx]||'');
+      return `<span class="sen" data-s="${idx}">`+[...sen].map(c=>{if(!isHan(c))return esc(c);const pp=useRuby?pys[k++]:py(c);return `<ruby data-c="${c}" data-p="${pp}">${c}<rt>${pp}</rt></ruby>`}).join('')+'</span>'}).join('');
+    return `<p>${body}</p><div class="en">${ens.map(esc).join(' ')}</div>`}).join('');
+}
+const sentences=p=>p.text.replace(/\n/g,'|').split('|');
+function normalise(s){return s.replace(/[\s，。！？、,.!?“”"'‘’：:；;（）()]/g,'')}
+function startReading(lv,i){
+  leaveHash();
+  const p=CONTENT[lv].passages[i],id=`${lv}|p${i}`;const lv0=heroLv(),g0=gearOwned();
+  const scored=p.qs.filter(q=>q.t!=='self').length;
+  const B=makeBattle(bossFor(lv,i),`${lv}|p${i}`,scored,true);
+  app.innerHTML=`<div class="stage rd ${S.set.py?'':'nopy'} ${S.set.en?'':'noen'}" id="rd"><div class="topbar"><button class="ghost" id="quit">← 退出</button><span class="muted">${lvName(lv)} · 阅读 ${i+1}</span></div>
+   ${B?arenaHTML(B):''}
+   <h2 class="kai" style="margin-top:14px;font-size:30px">${esc(p.title)} <span class="en" style="font-size:16px;font-family:'Noto Sans SC',sans-serif;font-weight:400">${esc(p.en)}</span></h2>
+   <div class="row" style="margin-bottom:10px"><button class="tog" id="pyT" aria-pressed="${S.set.py}">拼音</button><button class="tog" id="enT" aria-pressed="${S.set.en}">英文</button>${sayBtn(p.text.replace(/[|\n]/g,''),'听全文')}</div>
+   <p class="note" style="margin-top:0">不认识的字，点一下就能看拼音、意思，还能听读音。</p>
+   <div class="passage kai" id="ps">${passageHTML(p)}</div>
+   <div class="wordcard" id="wc" hidden></div>
+   <p class="muted" style="margin-top:20px">读完短文，回答问题。写的答案请用汉语拼音输入法打中文，写完整的句子。</p>
+   <form id="rf">${p.qs.map((q,j)=>`<div class="rq" data-j="${j}"><div><span class="n">${j+1}.</span><span class="kai" style="font-size:19px">${esc(q.q)}</span>${q.t==='tf'?'<span class="muted">（对还是错？）</span>':''} ${sayBtn(q.q,'听')}</div><div class="qen">${esc(q.en)}</div>
+    ${q.t==='mc'?`<div class="opts">${q.o.map((o,k)=>`<label class="o"><input type="radio" name="q${j}" value="${k}"><span>${esc(o)}<small class="qen">${esc(q.oen[k])}</small></span></label>`).join('')}</div>`
+     :q.t==='tf'?`<div class="opts"><label class="o"><input type="radio" name="q${j}" value="1">对 <small class="qen">true</small></label><label class="o"><input type="radio" name="q${j}" value="0">错 <small class="qen">false</small></label></div>`
+     :`<textarea name="q${j}" rows="2" style="margin-top:8px" placeholder="在这里写答案（用中文）"></textarea>`}
+    <div class="res"></div></div>`).join('')}
+   <div class="row" style="margin-top:16px"><button class="pri" id="sub">交卷${B?'，发动攻击':''}</button><span class="note" id="subm"></span></div></form><div id="rw"></div></div>`;
+  if(B)drawBattle(B);
+  const rd=$('#rd');
+  $('#quit').onclick=()=>go('level-'+lv.toLowerCase());
+  $('#pyT').onclick=e=>{const on=rd.classList.toggle('nopy');e.currentTarget.setAttribute('aria-pressed',String(!on));S.set.py=!on;save()};
+  $('#enT').onclick=e=>{const on=rd.classList.toggle('noen');e.currentTarget.setAttribute('aria-pressed',String(!on));S.set.en=!on;save()};
+  const sens=sentences(p);
+  $('#ps').onclick=e=>{const r=e.target.closest('ruby');if(!r)return;const s=r.closest('.sen');
+    app.querySelectorAll('#ps .on,#ps .sel').forEach(x=>x.classList.remove('on','sel'));r.classList.add('sel');s.classList.add('on');
+    const c=r.dataset.c,si=+s.dataset.s;const wc=$('#wc');wc.hidden=false;
+    wc.innerHTML=`<div class="c kai">${c}</div><div class="p">${r.dataset.p}</div><div>${esc(en(c))||'<span class="note">（没有收录这个字的意思）</span>'}</div>
+      <div class="row">${sayBtn(c,'听这个字')}${sayBtn(sens[si],'听这一句')}<button class="say" type="button" id="wcx">关闭</button></div>
+      <div style="grid-column:1/-1" class="note">这一句：${esc(p.ens[si]||'')}</div>`;
+    $('#wcx').onclick=()=>{wc.hidden=true;app.querySelectorAll('#ps .on,#ps .sel').forEach(x=>x.classList.remove('on','sel'))};
+    say(c)};
+  $('#rf').onsubmit=e=>{e.preventDefault();
+    const fd=new FormData(e.target);
+    const empty=p.qs.filter((q,j)=>!String(fd.get('q'+j)||'').trim()).length;
+    if(empty&&!e.target.dataset.warned){e.target.dataset.warned=1;$('#subm').textContent=`还有 ${empty} 题没有回答。再按一次就会交卷。`;return}
+    let got=0,tot=0;const vals=[];
+    p.qs.forEach((q,j)=>{const box=app.querySelector(`.rq[data-j="${j}"] .res`);const v=String(fd.get('q'+j)||'');
+      if(q.t==='mc'||q.t==='tf'){tot++;const right=q.t==='mc'?String(q.a):(q.a?'1':'0');const ok=v===right;if(ok)got++;vals.push(ok?1:0);
+        box.innerHTML=`<div class="mark ${ok?'ok':'bad'}">${ok?'✓ 答对了':'✗ 正确答案：'+esc(q.t==='mc'?q.o[q.a]:(q.a?'对':'错'))}</div>`}
+      else if(q.t==='open'){tot++;const a=normalise(v);const hits=q.keys.map(g=>!!a&&g.some(k=>a.includes(k)));const sc=hits.filter(Boolean).length/q.keys.length;got+=sc;vals.push(sc);
+        box.innerHTML=`<div class="mark ${sc===1?'ok':sc>0?'part':'bad'}">${q.pts.map((t,k)=>`${hits[k]?'✓':'✗'} ${esc(t)}`).join('　')}<div class="model">参考答案：${esc(q.model)}</div></div>`}
+      else{box.innerHTML=`<div class="mark part">自己检查：和参考答案比一比，勾出你做到的。<div class="model">参考答案：${esc(q.model)}</div>${q.pts.map(t=>`<label class="o" style="margin-top:6px"><input type="checkbox"> ${esc(t)}</label>`).join('')}<div class="note">这一题不算分。</div></div>`}
+    });
+    e.target.querySelectorAll('input[type=radio],textarea').forEach(x=>x.disabled=true);
+    const pct=tot?got/tot:0;record(id,pct);
+    const sub=$('#sub');sub.disabled=true;
+    const fin=()=>{const rw=endBattle(B,lv0,g0);sub.disabled=false;sub.textContent='完成，返回';sub.type='button';sub.onclick=()=>go('level-'+lv.toLowerCase());
+      $('#subm').innerHTML=`得分 ${Math.round(got*10)/10} / ${tot}　${starHtml(starsOf(pct))}`;
+      $('#rw').innerHTML=`<div style="margin-top:12px">${rw}${newBadge?`<div class="reward">新徽章：${BADGES.find(b=>b[0]===newBadge)[1]}</div>`:''}</div>`;newBadge=null};
+    if(B){$('#arena').scrollIntoView({behavior:'smooth',block:'center'});vals.forEach((v,k)=>setTimeout(()=>battleTurn(B,v),400+k*800));setTimeout(()=>{fin();sub.scrollIntoView({behavior:'smooth',block:'center'})},600+vals.length*800)}
+    else{fin();sub.scrollIntoView({behavior:'smooth',block:'center'})}
+  };
+}
+
+chips();render();
+}
+</script>
+</body>
+</html>

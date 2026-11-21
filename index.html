@@ -155,6 +155,32 @@ td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}
 .set input{width:20px;height:20px}
 .banner{background:var(--badbg);padding:10px 16px;font-size:14px}
 .say{min-height:40px;padding:4px 12px;font-size:14px}
+.cz{display:inline-block;min-height:34px;min-width:4.5em;padding:0 8px;margin:0 3px;border:0;border-bottom:3px solid var(--red);border-radius:6px 6px 0 0;background:var(--partbg);font-family:"Noto Sans SC",sans-serif;font-size:17px;line-height:1.5;color:var(--ink);vertical-align:baseline;cursor:pointer}
+.cz.cur{outline:3px solid var(--cover);outline-offset:1px}.cz.pre{background:light-dark(#e6f0fa,#1b2b3d)}
+.cz.ok{background:var(--okbg);border-color:var(--ok)}.cz.bad{background:var(--badbg)}
+.clue{background:light-dark(#fff1a8,#4a3f10);box-shadow:0 0 0 2px light-dark(#f2d24b,#8a741c);border-radius:3px}
+.who{color:var(--cover);font-family:"Noto Sans SC",sans-serif;font-weight:700}
+.passage .dl{margin:0 0 2px}
+.pspanel{position:sticky;bottom:8px;z-index:3;background:var(--bg);border:2px solid var(--cover);border-radius:14px;padding:12px 14px;margin-top:14px;box-shadow:0 6px 20px rgba(0,0,0,.12)}
+.psopts{grid-template-columns:repeat(auto-fit,minmax(min(100%,220px),1fr));margin-top:10px}
+.pso{font-size:19px;min-height:52px;text-align:left;border-width:2px}.pso small{display:block;font-size:13px;color:var(--muted)}
+.pso.sel{border-color:var(--cover);background:var(--soft)}.pso.ok{background:var(--okbg);border-color:var(--ok)}.pso.bad{background:var(--badbg);border-color:var(--red)}
+.psx{border-top:1px solid var(--line);padding:10px 0}
+.daily{display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between;margin-bottom:14px;border-left:6px solid var(--red)}
+.storycard{border-left-color:var(--gold)}
+.big-play{font-size:18px;min-height:52px;padding:8px 22px}
+.passage .dl.on{background:light-dark(#fff1c9,#3a3018);border-radius:6px}
+.storywrap{display:grid;grid-template-columns:minmax(0,520px) minmax(0,1fr);gap:24px;align-items:start;margin-top:10px}
+@media(max-width:860px){.storywrap{grid-template-columns:minmax(0,1fr)}}
+.smap{width:100%;height:auto;display:block}
+.snode.open{cursor:pointer}.snode.open:hover circle,.snode:focus-visible circle{stroke:var(--red);stroke-width:6}
+.snode{outline:none}
+.slist{display:grid;gap:6px}.slist button{text-align:left;min-height:40px;padding:6px 12px}
+.scenebox{border-radius:16px;overflow:hidden;border:1px solid var(--line)}.scene{display:block;width:100%;height:auto}
+@media(max-width:700px){.pspanel{position:static;box-shadow:none}}
+.tier{border:1px solid var(--line);border-radius:14px;padding:14px 16px;margin-top:14px}
+.tier .rec{font-size:13px;background:var(--red);color:#fff;border-radius:999px;padding:2px 10px;margin-left:8px;vertical-align:middle}
+.why{background:var(--soft);border-radius:10px;padding:10px 12px;margin-top:8px;font-size:15px}.why .wen{color:var(--muted);font-size:14px;margin-top:4px}
 .fcard{display:block;perspective:1000px;width:min(320px,84vw);aspect-ratio:3/4;margin:16px auto 10px;padding:0;border:0;background:none;min-height:0}
 .fcard .in{position:relative;display:block;width:100%;height:100%;transition:transform .5s;transform-style:preserve-3d}
 .fcard.flip .in{transform:rotateY(180deg)}
@@ -215,6 +241,8 @@ td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}
 <script src="ez-5B.js"></script>
 <script src="ez-6A.js"></script>
 <script src="ez-6B.js"></script>
+<script src="ez-psle.js"></script>
+<script src="ez-story.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/hanzi-writer@3.7.3/dist/hanzi-writer.min.js"></script>
 <script>
 {
@@ -227,13 +255,13 @@ const MON_NAMES=['糊涂虫','乱笔怪','忘字妖','墨点精','歪歪兽','�
 const BOSS_NAMES=['大雾王','乌云王','迷宫王','黑墨王','狂风王','冰冻王','打雷王','沙尘王','暗影王','石头王','火焰王','海浪王'];
 const HEROES={mo:{name:'墨墨',desc:'一滴会写字的墨水'},zhi:{name:'纸纸',desc:'用作业纸折成的纸鹤'},shi:{name:'狮狮',desc:'爱打鼓的小醒狮'}};
 const GEAR=[['brush','神笔',6,'攻击 +4'],['shield','砚台盾',15,'多一条命'],['gold','金墨',30,'答对 2 题就连击'],['cape','飞天披风',50,'每场挡住一次攻击']];
-const BADGES=[['first','第一颗星'],['streak3','连续学习三天'],['lv1A','一上完成'],['clear','清空复习本'],['boss','打败第一个大王']];
+const BADGES=[['first','第一颗星'],['streak3','连续学习三天'],['lv1A','一上完成'],['clear','清空复习本'],['boss','打败第一个大王'],['daily7','每日一练七天'],['story','完成冒险故事']];
 
 /* ================= state ================= */
 const KEY='ez-cl-v1';let canStore=true;
-const blank=()=>({v:1,name:'',stars:{},best:{},review:{},streak:{last:'',n:0},badges:[],log:[],hadReview:0,hero:{type:'',xp:0,won:[],up:{atk:0,hp:0,life:0}},set:{py:true,en:false,battle:true}});
+const blank=()=>({v:1,name:'',stars:{},best:{},review:{},streak:{last:'',n:0},badges:[],log:[],hadReview:0,hero:{type:'',xp:0,won:[],up:{atk:0,hp:0,life:0}},story:{read:[],quiz:[],seen:0},set:{py:true,en:false,battle:true}});
 let S;
-try{const o=JSON.parse(localStorage.getItem(KEY))||{};S={...blank(),...o};S.hero={...blank().hero,...(o.hero||{})};S.hero.up={atk:0,hp:0,life:0,...((o.hero||{}).up||{})};S.set={...blank().set,...(o.set||{})}}catch(e){canStore=false;S=blank()}
+try{const o=JSON.parse(localStorage.getItem(KEY))||{};S={...blank(),...o};S.hero={...blank().hero,...(o.hero||{})};S.hero.up={atk:0,hp:0,life:0,...((o.hero||{}).up||{})};S.story={read:[],quiz:[],seen:0,...(o.story||{})};S.set={...blank().set,...(o.set||{})}}catch(e){canStore=false;S=blank()}
 const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){canStore=false;showWarn()}};
 const showWarn=()=>{document.getElementById('warn').innerHTML=canStore?'':'<div class="banner">这个浏览器不能自动保存进度。做完练习后，请到“我的进度”复制进度码。</div>'};
 showWarn();
@@ -332,7 +360,10 @@ const comboAt=()=>gearOwned().includes('gold')?2:3;
 /* ================= progress ================= */
 function actList(lv){const C=CONTENT[lv],a=[];C.lessons.forEach((l,i)=>{a.push({id:`${lv}|${i}|r`,kind:'r',lv,i,label:`${l.n} · 认读`});a.push({id:`${lv}|${i}|w`,kind:'w',lv,i,label:`${l.n} · 写字`})});if(C.grammar&&C.grammar.length)a.push({id:`${lv}|g`,kind:'g',lv,i:0,label:'语文应用'});if(C.colloc&&C.colloc.length)a.push({id:`${lv}|c`,kind:'c',lv,i:0,label:'词语搭配'});C.passages.forEach((p,i)=>a.push({id:`${lv}|p${i}`,kind:'p',lv,i,label:`阅读：${p.title}`}));return a}
 function levelPct(lv){if(!CONTENT[lv])return 0;const a=actList(lv);return a.reduce((s,x)=>s+(S.stars[x.id]||0),0)/(a.length*3)}
-function skillStats(){const r={r:[0,0,0],w:[0,0,0],p:[0,0,0],g:[0,0,0]};for(const lv in CONTENT)for(const x of actList(lv)){const t=r[x.kind==='c'?'g':x.kind];t[1]++;if(x.id in S.best){t[0]+=S.best[x.id];t[2]++}}return r}
+const PS=(window.EZ&&EZ.psle)?EZ.psle.tiers:[];
+const psAll=()=>{const a=[];PS.forEach((T,ti)=>T.sets.forEach(s=>a.push({id:'PS|'+s.id,T,ti,s})));return a};
+const psMon=sid=>{const a=psAll();const k=a.findIndex(x=>x.s.id===sid);const x=a[k];return {name:({cloze:'填空',dialog:'对话',listen:'听力'})[x.s.type]+['小王','大王','魔王'][x.ti],svg:monsterSVG(200+k*7,(k*47+20)%360,true)}};
+function skillStats(){const r={r:[0,0,0],w:[0,0,0],p:[0,0,0],g:[0,0,0]};for(const lv in CONTENT)for(const x of actList(lv)){const t=r[x.kind==='c'?'g':x.kind];t[1]++;if(x.id in S.best){t[0]+=S.best[x.id];t[2]++}}r.e=[0,0,0];for(const x of psAll()){r.e[1]++;if(x.id in S.best){r.e[0]+=S.best[x.id];r.e[2]++}}return r}
 let newBadge=null;
 function record(id,pct){
   S.best[id]=Math.max(S.best[id]||0,pct);
@@ -347,6 +378,8 @@ function checkBadges(){
   if(S.streak.n>=3)add('streak3');
   for(const lv in CONTENT)if(actList(lv).every(x=>(S.stars[x.id]||0)>=1))add('lv'+lv);
   if(S.hero.won.some(w=>w.includes('|p')))add('boss');
+  if(typeof dailyStreak==='function'&&dailyStreak()>=7)add('daily7');
+  if(EZ.story&&S.story&&S.story.read.length>=EZ.story.length)add('story');
   const n=Object.keys(S.review).length;S.hadReview=Math.max(S.hadReview,n);
   if(n===0&&S.hadReview>=3)add('clear');
 }
@@ -383,6 +416,8 @@ function render(){
   if(!S.name||!S.hero.type)return viewStart();
   if(h==='progress')return viewProgress();
   if(h==='hero')return viewHero();
+  if(h==='psle')return viewPSLE();
+  if(h==='story'&&EZ.story)return viewStory();
   if(h.startsWith('level-')){const id=h.slice(6).toUpperCase();if(CONTENT[id])return viewLevel(id)}
   viewHome();
 }
@@ -414,20 +449,30 @@ function viewHome(){
   const nx=nextStep(),st=skillStats();
   const pc=t=>t[2]?Math.round(t[0]/t[2]*100):0;
   app.innerHTML=`<div class="home">
-   <section><h2>选一个级别</h2>
+   <section>
+    <div class="daily card"><div><h3 style="margin:0">每日一练 <span class="note" style="font-weight:400">约 5 分钟 · 8 题</span></h3>
+     <p class="note" style="margin:4px 0 0">${('DAY|'+today()) in S.best?`今天已经完成了 ✓ ${starHtml(S.stars['DAY|'+today()]||0)}`:'复习本 + 你现在的级别 + 一点语文应用，每天练一点。'}${dailyStreak()?`　连续 ${dailyStreak()} 天`:''}</p></div>
+     <button class="pri" id="dayGo">${('DAY|'+today()) in S.best?'再练一次':'开始今天的练习'}</button></div>
+    ${EZ.story?`<div class="daily card storycard"><div><h3 style="margin:0">冒险地图 <span class="note" style="font-weight:400">第 ${S.story.read.length} / ${EZ.story.length} 章</span></h3>
+     <p class="note" style="margin:4px 0 0">${storyUnlocked()>S.story.read.length?'<b style="color:var(--red)">有新章节可以看！</b>':(()=>{const n=EZ.story.find(c=>totalStars()<c.need);return n?`再拿 ★${n.need-totalStars()} 就能解锁下一章。`:'冒险全部解锁了！'})()}</p></div>
+     <button id="storyGo">打开地图</button></div>`:''}
+    <h2>选一个级别</h2>
     <div class="map">${LEVELS.map(L=>{const ok=!!CONTENT[L.id],p=levelPct(L.id);return `<button class="cell kai ${ok?'':'off'} ${nx.lv===L.id?'next':''}" ${ok?`data-lv="${L.id}"`:'disabled'} aria-label="${L.name}">
       <span class="fill" style="height:${Math.round(p*100)}%"></span><b>${L.name}</b><span>${ok?Math.round(p*100)+'%':'制作中'}</span></button>`}).join('')}</div>
     <p class="note">从小一到小六，越往后越难。你可以选任何一个已开放的级别。格子填满表示拿到了全部星星。</p>
     <div class="card next-card" style="margin-top:18px"><span class="muted">下一步</span><div class="t">${esc(nx.t)}</div><p class="muted" style="margin:0 0 12px">${esc(nx.d)}</p>${nx.btn?`<button class="pri" id="nxBtn">${nx.btn}</button>`:''}</div>
+    ${PS.length?`<div class="card" style="margin-top:14px"><h3>PSLE 备考</h3><p class="muted" style="margin:0 0 10px">短文填充、完成对话，从入门到挑战，一步一步来。</p><button class="pri" id="psGo">进入 PSLE 备考</button></div>`:''}
    </section>
    <aside style="display:grid;gap:16px;align-content:start">
     ${S.set.battle?`<div class="card">${heroCard()}</div>`:''}
     <div class="card"><h3>我的能力</h3>
-     ${[['认读',st.r],['写字',st.w],['阅读',st.p],['语文应用',st.g]].map(([n,t])=>`<div class="skill"><span>${n}</span><span class="meter"><i style="width:${pc(t)}%"></i></span><em>${t[2]?pc(t)+'%':'—'}</em></div>`).join('')}
+     ${[['认读',st.r],['写字',st.w],['阅读',st.p],['语文应用',st.g],['PSLE备考',st.e]].map(([n,t])=>`<div class="skill"><span>${n}</span><span class="meter"><i style="width:${pc(t)}%"></i></span><em>${t[2]?pc(t)+'%':'—'}</em></div>`).join('')}
      <p class="note">按你做过的练习的最好成绩计算。</p></div>
    </aside></div>`;
   app.querySelectorAll('[data-lv]').forEach(b=>b.onclick=()=>go('level-'+b.dataset.lv.toLowerCase()));
   if(nx.btn)$('#nxBtn').onclick=nx.go;
+  const pg=$('#psGo');if(pg)pg.onclick=()=>go('psle');
+  $('#dayGo').onclick=startDaily;const sg=$('#storyGo');if(sg)sg.onclick=()=>go('story');
   const ug=$('#upGo');if(ug)ug.onclick=()=>go('hero');
 }
 
@@ -478,8 +523,311 @@ function viewCards(lv,li){
   document.addEventListener('keydown',key);draw();
 }
 
+function viewPSLE(){
+  const typeName=t=>t==='cloze'?'短文填充':t==='dialog'?'完成对话':'听力理解';
+  const rec=PS.find(T=>T.sets.some(s=>(S.stars['PS|'+s.id]||0)<2));
+  app.innerHTML=`<div class="row" style="justify-content:space-between"><h2 style="margin:0">PSLE 备考</h2><button class="ghost" id="back">← 返回</button></div>
+   <p class="muted">短文填充：根据短文的内容和上下文的意思，选出最适当的答案。完成对话：根据对话的内容，选出最适当的答案。听力理解：听录音，回答问题。</p>
+   <details class="card" ${Object.keys(S.best).some(k=>k.startsWith('PS|'))?'':'open'}><summary><b>做题三步</b> <span class="note">How to tackle these questions</span></summary>
+    <ol style="margin:10px 0 0;padding-left:22px;line-height:1.9">
+     <li><b>先读全文</b>，知道短文或对话在说什么。<span class="note">Read the whole text first.</span></li>
+     <li><b>找线索</b>：看空格前后的词语、关联词（因为、可是、即使……）、标点，还有下一个人怎么回答。<span class="note">Look for clues around the blank.</span></li>
+     <li><b>放进去读一读</b>：把答案放进句子里，读起来通顺、意思对，才选它。<span class="note">Try the answer in the sentence and read it aloud.</span></li>
+    </ol>
+    <p class="note" style="margin:8px 0 0">听力理解：先看问题再听，注意数字、时间、地点和“没有”“不是”这样的字眼。完成对话还要注意：说话的人是谁？礼貌用语（请、谢谢、不客气、对不起）用得对吗？</p></details>
+   ${PS.map((T,ti)=>`<div class="tier"><h3 style="margin:0">${T.name} <span class="muted" style="font-weight:400;font-size:15px">${T.en}</span>${rec===T?'<span class="rec">建议从这里开始</span>':''}</h3>
+     <p class="note" style="margin:4px 0 10px">${T.desc}</p><div class="lessons">
+     ${T.sets.map(st=>{const id='PS|'+st.id,sv=S.stars[id],m=psMon(st.id);return `<div class="lesson"><span class="mini ${S.hero.won.includes(id)?'':'sil'}">${S.set.battle?m.svg:''}</span><strong>${typeName(st.type)}</strong><span>《${esc(st.title)}》<span class="note">${esc(st.en)} · ${st.blanks?st.blanks.length+' 空':st.qs.length+' 题'}</span></span><span></span><span></span><div class="act">${sv===undefined?'<span class="note">未做</span>':starHtml(sv)}<button data-ps="${st.id}">开始</button></div></div>`}).join('')}</div></div>`).join('')}`;
+  $('#back').onclick=()=>go('home');
+  app.querySelectorAll('[data-ps]').forEach(b=>b.onclick=()=>startPS(b.dataset.ps));
+}
+
+function startPS(sid,prev){
+  leaveHash();stopWriter();
+  if(PS.find(t=>t.sets.some(x=>x.id===sid)).sets.find(x=>x.id===sid).type==='listen')return startListen(sid,prev);
+  const T=PS.find(t=>t.sets.some(x=>x.id===sid)),set=T.sets.find(x=>x.id===sid),id='PS|'+sid,N=set.blanks.length,dlg=set.type==='dialog';
+  const opts=set.blanks.map(b=>shuffle(b.o.map((o,i)=>({o,en:b.oen[i],ok:i===b.a}))));
+  const st={mode:prev?'step':T.id==='t3'?'exam':'step',cur:0,pick:Array(N).fill(null),done:Array(N).fill(false),val:Array(N).fill(0),hint:Array(N).fill(false),cut:Array(N).fill(null).map(()=>[]),clue:-1,over:false};
+  if(prev)prev.val.forEach((v,n)=>{if(v===1){st.done[n]=true;st.val[n]=1;st.pick[n]=opts[n].findIndex(x=>x.ok)}});
+  if(prev)st.cur=st.done.findIndex(d=>!d);
+  const lv0=heroLv(),g0=gearOwned();
+  const B=makeBattle(psMon(sid),id,prev?st.done.filter(d=>!d).length||1:N,true);
+  const pys=set.py.trim().split(/\s+/);
+  const sentences=set.text.replace(/\n/g,'|').split('|');
+  const fillTxt=(t,keepBlank)=>t.replace(/【(\d)】/g,(m,n)=>{const k=+n-1;return st.pick[k]!=null?opts[k][st.pick[k]].o:(keepBlank?'＿＿':'，')});
+  const sayText=t=>fillTxt(t).replace(/^[^：]{1,6}：/,'');
+  function clueSet(){const out=new Set();if(st.clue<0)return out;const c=set.blanks[st.clue].clue;const idx=[];let flat='';
+    [...set.text].forEach((ch,i)=>{if(ch!=='|'&&ch!=='\n'){idx.push(i);flat+=ch}});const p=flat.indexOf(c);if(p>=0)for(let j=0;j<c.length;j++)out.add(idx[p+j]);return out}
+  function passage(){
+    const cl=clueSet();let k=0,si=0,html='';const chars=[...set.text];let i=0;
+    const lines=[];let line=[];
+    // tokenise into lines of tokens
+    while(i<chars.length){const ch=chars[i];
+      if(ch==='\n'){lines.push(line);line=[];i++;continue}
+      if(ch==='【'){const n=+chars[i+1];line.push({b:n-1});i+=3;continue}
+      line.push({c:ch,i});i++}
+    lines.push(line);
+    for(const ln of lines){let speaker=-1;if(dlg){const p=ln.findIndex(t=>t.c==='：');speaker=p}
+      let ensHere=[];let body='';let sen='';
+      const flushS=()=>{body+=`<span class="sen">${sen}</span>`;sen='';ensHere.push(set.ens[si++]||'')};
+      ln.forEach((t,j)=>{
+        if(t.b!==undefined){const n=t.b,pk=st.pick[n];const cls=['cz'];if(st.mode==='step'&&n===st.cur&&!st.over&&!st.done[n])cls.push('cur');if(pk!=null&&!st.done[n])cls.push('pre');if(st.done[n])cls.push(st.val[n]>0?'ok':'bad');
+          const word=st.done[n]&&st.val[n]===0?set.blanks[n].o[set.blanks[n].a]:pk!=null?opts[n][pk].o:'＿＿＿';
+          sen+=`<button type="button" class="${cls.join(' ')}" data-b="${n}">（${n+1}）${esc(word)}</button>`;return}
+        if(t.c==='|'){flushS();return}
+        let h;if(isHan(t.c)){h=`<ruby>${t.c}<rt>${pys[k++]||''}</rt></ruby>`}else h=esc(t.c);
+        if(cl.has(t.i))h=`<span class="clue">${h}</span>`;
+        if(dlg&&speaker>=0&&j<=speaker)h=`<span class="who">${h}</span>`;
+        sen+=h});
+      flushS();
+      html+=`<p class="${dlg?'dl':''}">${body}</p><div class="en">${ensHere.map(esc).join(' ')}</div>`}
+    return html}
+  function frame(){
+    const fresh=!st.done.some(Boolean)&&!st.over;
+    app.innerHTML=`<div class="stage rd ${(S.set.py||T.id==='t1')?'':'nopy'} ${S.set.en?'':'noen'}" id="rd">
+     <div class="topbar"><button class="ghost" id="quit">← 退出</button><span class="meter"><i style="width:${st.done.filter(Boolean).length/N*100}%"></i></span><span class="note">${st.done.filter(Boolean).length} / ${N}</span></div>
+     <p class="muted" style="margin:8px 0 0">PSLE 备考 · ${T.name} · ${dlg?'完成对话':'短文填充'}</p>
+     ${B?arenaHTML(B):''}
+     <h2 class="kai" style="margin:12px 0 6px;font-size:28px">${esc(set.title)} <span class="en" style="font-size:15px;font-family:'Noto Sans SC',sans-serif;font-weight:400">${esc(set.en)}</span></h2>
+     <div class="row" style="margin-bottom:8px">
+      <button class="tog" id="pyT" aria-pressed="${!!(S.set.py||T.id==='t1')}">拼音</button><button class="tog" id="enT" aria-pressed="${S.set.en}">英文</button>
+      <button class="say" type="button" id="sayAll">听全文</button>
+      ${fresh?`<span id="modes" class="row"><span class="note" style="margin-left:6px">做法：</span><button class="tog" id="mStep" aria-pressed="${st.mode==='step'}">一步一步（有提示）</button><button class="tog" id="mExam" aria-pressed="${st.mode==='exam'}">整篇做（像考试）</button></span>`:''}
+     </div>
+     <p class="note" style="margin:0 0 8px">${dlg?'根据对话的内容，选出最适当的答案。':'根据短文的内容和上下文的意思，选出最适当的答案。'}${st.mode==='step'?' 先读全文，再一空一空地做。':' 做完所有的空格再交卷。'}</p>
+     <div class="passage kai" id="ps">${passage()}</div>
+     <div id="panel"></div><div id="rw"></div></div>`;
+    if(B)drawBattle(B);
+    $('#quit').onclick=()=>go('psle');
+    const rd=$('#rd');
+    $('#pyT').onclick=e=>{const on=rd.classList.toggle('nopy');e.currentTarget.setAttribute('aria-pressed',String(!on));S.set.py=!on;save()};
+    $('#enT').onclick=e=>{const on=rd.classList.toggle('noen');e.currentTarget.setAttribute('aria-pressed',String(!on));S.set.en=!on;save();panel()};
+    $('#sayAll').onclick=()=>say(sentences.map(sayText).join(''));
+    if(fresh){$('#mStep').onclick=()=>{st.mode='step';frame()};$('#mExam').onclick=()=>{st.mode='exam';frame()}}
+    $('#ps').onclick=e=>{const b=e.target.closest('.cz');if(!b||st.over)return;const n=+b.dataset.b;
+      if(st.mode==='step'){if(!st.done[n]){st.cur=n;st.clue=-1;frame()}}else{const r=$(`#px${n}`);if(r)r.scrollIntoView({behavior:'smooth',block:'center'})}};
+    panel();
+  }
+  function whyHTML(n){const b=set.blanks[n];return `<div class="why"><b>解析：</b>${esc(b.why)}<div class="wen">${esc(b.wen)}</div></div>`}
+  function panel(){
+    const P=$('#panel');if(st.over){P.innerHTML='';return}
+    if(st.mode==='step'){
+      const n=st.cur,b=set.blanks[n],o=opts[n],done=st.done[n];
+      P.innerHTML=`<div class="pspanel" aria-live="polite"><div class="row" style="justify-content:space-between"><b>第 ${n+1} 空</b><span class="note">共 ${N} 空 · 已做 ${st.done.filter(Boolean).length}</span></div>
+       ${st.clue===n?`<div class="hintbox" style="margin-top:8px">线索：${esc(b.hint)}</div>`:''}
+       <div class="opts psopts">${o.map((x,j)=>st.cut[n].includes(j)?'':`<button class="opt pso ${st.pick[n]===j?'sel':''} ${done&&x.ok?'ok':''} ${done&&st.pick[n]===j&&!x.ok?'bad':''}" data-j="${j}" ${done?'disabled':''}>${esc(x.o)}${S.set.en?`<small>${esc(x.en)}</small>`:''}</button>`).join('')}</div>
+       ${done?`<div class="fb ${st.val[n]>0?'ok':'bad'}" style="margin:10px 0 0">${st.val[n]>0?(st.hint[n]?'答对了（用了提示，算半分）。':'答对了！'):`再想想：正确答案是“${esc(b.o[b.a])}”。`}</div>${whyHTML(n)}
+         <div class="row" style="margin-top:10px"><button class="pri" id="psNext">${st.done.every(Boolean)?'看成绩':'下一空 →'}</button></div>`
+       :`<div class="row" style="margin-top:10px"><button class="say" id="hClue" ${st.clue===n?'disabled':''}>找线索</button><button class="say" id="hCut" ${st.cut[n].length?'disabled':''}>去掉${o.length>3?'两':'一'}个选项</button><button class="say" id="hSay">听这一句</button><button class="pri" id="psOk" ${st.pick[n]==null?'disabled':''}>确定</button></div>
+         <p class="note" style="margin:6px 0 0">点一个选项，它会放进空格里，读一读通不通顺，再按“确定”。用了“找线索”或“去掉选项”，这一空算半分。</p>`}</div>`;
+      const sen=sentences.find(x=>x.includes(`【${n+1}】`))||'';
+      P.querySelectorAll('.pso').forEach(btn=>btn.onclick=()=>{st.pick[n]=+btn.dataset.j;$('#ps').innerHTML=passage();panel();say(sayText(sen))});
+      if(done){$('#psNext').onclick=()=>{const nx=st.done.findIndex((d,k)=>!d&&k>n);const any=nx>=0?nx:st.done.findIndex(d=>!d);if(any<0)return finish();st.cur=any;st.clue=-1;frame();$('#panel').scrollIntoView({block:'nearest'})};return}
+      $('#hClue').onclick=()=>{st.clue=n;st.hint[n]=true;$('#ps').innerHTML=passage();panel();const c=$('#ps .clue');if(c)c.scrollIntoView({behavior:'smooth',block:'center'})};
+      $('#hCut').onclick=()=>{const wrong=o.map((x,j)=>x.ok?-1:j).filter(j=>j>=0&&j!==st.pick[n]);st.cut[n]=shuffle(wrong).slice(0,o.length-2);if(st.cut[n].includes(st.pick[n]))st.pick[n]=null;st.hint[n]=true;panel()};
+      $('#hSay').onclick=()=>say(sayText(sen));
+      $('#psOk').onclick=()=>{const md=$('#modes');if(md)md.remove();const ok=o[st.pick[n]].ok;st.done[n]=true;st.val[n]=ok?(st.hint[n]?.5:1):0;battleTurn(B,st.val[n]);st.clue=-1;$('#ps').innerHTML=passage();panel();if(ok)say(sayText(sen));
+        const top=$('.topbar .meter i');if(top)top.style.width=st.done.filter(Boolean).length/N*100+'%';const nt=$('.topbar .note');if(nt)nt.textContent=`${st.done.filter(Boolean).length} / ${N}`};
+    }else{
+      P.innerHTML=`<div class="card" style="margin-top:14px">${set.blanks.map((b,n)=>`<div class="psx" id="px${n}"><b>（${n+1}）</b><div class="opts psopts" style="margin-top:6px">${opts[n].map((x,j)=>`<button class="opt pso ${st.pick[n]===j?'sel':''}" data-n="${n}" data-j="${j}">${esc(x.o)}${S.set.en?`<small>${esc(x.en)}</small>`:''}</button>`).join('')}</div></div>`).join('')}
+       <div class="row" style="margin-top:10px"><button class="pri" id="psSub">交卷</button><span class="note" id="psm">${st.pick.filter(x=>x!=null).length} / ${N} 已选</span></div></div>`;
+      P.querySelectorAll('.pso').forEach(btn=>btn.onclick=()=>{st.pick[+btn.dataset.n]=+btn.dataset.j;$('#ps').innerHTML=passage();panel();const r=$(`#px${btn.dataset.n}`);if(r)r.scrollIntoView({block:'nearest'})});
+      let warned=false;
+      $('#psSub').onclick=()=>{const left=st.pick.filter(x=>x==null).length;if(left&&!warned){warned=true;$('#psm').textContent=`还有 ${left} 空没有选。再按一次就交卷。`;return}
+        set.blanks.forEach((b,n)=>{st.done[n]=true;st.val[n]=st.pick[n]!=null&&opts[n][st.pick[n]].ok?1:0});finish()};
+    }
+  }
+  function finish(){
+    st.over=true;const pct=st.val.reduce((a,b)=>a+b,0)/N;record(id,pct);
+    const show=()=>{const rw=endBattle(B,lv0,g0);
+      $('#ps').innerHTML=passage();$('#panel').innerHTML='';
+      $('#rw').innerHTML=`<div class="card sum" style="margin-top:14px;text-align:left"><h2 style="text-align:center">${esc(set.title)} · 完成</h2><div style="text-align:center">${starHtml(starsOf(pct))}<p style="font-size:20px;margin:6px 0">得分 ${Math.round(st.val.reduce((a,b)=>a+b,0)*10)/10} / ${N}</p>${rw}${storyNews()}${newBadge?`<div class="reward">新徽章：${BADGES.find(x=>x[0]===newBadge)[1]}</div>`:''}</div>
+        ${st.mode==='exam'||st.val.some(v=>v<1)?`<h3 style="margin-top:14px">每一空的解析</h3>${set.blanks.map((b,n)=>`<div class="psx"><b>（${n+1}）${esc(b.o[b.a])}</b> ${st.val[n]===1?'<span class="stars">✓</span>':st.val[n]>0?'<span class="note">（用了提示）</span>':`<span class="note">你选了：${st.pick[n]!=null?esc(opts[n][st.pick[n]].o):'没有选'}</span>`}${whyHTML(n)}</div>`).join('')}`:'<p class="muted" style="text-align:center">每一空都答对了，没有用提示，真棒！</p>'}
+        ${pct<.6?`<p class="hintbox">觉得有点难？试试“一步一步”的做法，用“找线索”帮忙，再做一次。</p>`:''}
+        <div class="row" style="justify-content:center;margin-top:12px">${st.val.some(v=>v<1)?`<button class="pri" id="redo">只改错的空（${st.val.filter(v=>v<1).length}）</button>`:''}<button id="again">再做一次</button><button ${st.val.some(v=>v<1)?'':'class="pri"'} id="ret">返回 PSLE 备考</button></div></div>`;newBadge=null;
+      if($('#redo'))$('#redo').onclick=()=>startPS(sid,{val:st.val.slice()});
+      $('#again').onclick=()=>startPS(sid);$('#ret').onclick=()=>go('psle');$('#rw').scrollIntoView({behavior:'smooth',block:'start'})};
+    if(B&&st.mode==='exam'){$('#arena').scrollIntoView({behavior:'smooth',block:'center'});st.val.forEach((v,k)=>setTimeout(()=>battleTurn(B,v),300+k*700));setTimeout(show,500+N*700)}else show();
+  }
+  frame();
+}
+
+/* ================= 每日一练 ================= */
+const lastLevel=()=>{const l=[...S.log].reverse().find(x=>/^\d[AB]\|/.test(x.a));return l?l.a.split('|')[0]:'1A'};
+const dailyStreak=()=>{let n=0;const d=new Date();if(!(('DAY|'+today()) in S.best))d.setDate(d.getDate()-1);for(;;){const k='DAY|'+d.toLocaleDateString('en-CA');if(k in S.best){n++;d.setDate(d.getDate()-1)}else break}return n};
+function dailyItems(){
+  const lv=lastLevel(),k=lvIdx(lv),C=CONTENT[lv],items=[];
+  const rv=shuffle(Object.entries(S.review));let w=0;
+  rv.slice(0,3).forEach(([c,r])=>{if(r.k==='w'&&w<1&&CONTENT[r.lv]){w++;items.push({type:'write',lv:r.lv,ch:c})}else if(CONTENT[r.lv])items.push(pyItem(r.lv,c,''))});
+  shuffle(C.fill).slice(0,2).forEach(f=>items.push({type:'fill',lv,ch:f.a,q:f.q,en:f.en,opts:shuffle(f.o)}));
+  if(k>0){const P=CONTENT[LEVELS[k-1].id];const L=P.lessons[Math.random()*P.lessons.length|0];items.push(pyItem(LEVELS[k-1].id,[...L.read][Math.random()*L.read.length|0],L.read))}
+  const near=key=>{for(let j=k;j>=0;j--){const X=CONTENT[LEVELS[j].id];if(X[key]&&X[key].length)return X[key]}return null};
+  const G=near('grammar');if(G){const g=G[Math.random()*G.length|0];items.push(gItem(g))}
+  const Co=near('colloc');if(Co){const c=Co[Math.random()*Co.length|0];items.push(gItem({...c,topic:'词语搭配'}))}
+  let guard=0;while(items.length<8&&guard++<20){const L=C.lessons[Math.random()*C.lessons.length|0];const ch=[...L.read][Math.random()*L.read.length|0];if(!items.some(x=>x.ch===ch))items.push(pyItem(lv,ch,L.read))}
+  return shuffle(items).slice(0,8);
+}
+function gItem(g){let parts=null;if(g.t==='order'){parts=shuffle(g.parts);let n=0;while(parts.join('')===g.parts.join('')&&n++<20)parts=shuffle(g.parts)}return {type:'g',g,opts:g.t==='pick'?shuffle(g.o):null,parts,R:g.t==='match'?shuffle(g.R):null}}
+function refreshItem(it){if(it.type==='py')return pyItem(it.lv,it.ch,'');if(it.type==='fill')return {...it,opts:shuffle(it.opts)};if(it.type==='g')return gItem(it.g);return {...it}}
+function startDaily(){stopWriter();run({title:'每日一练',items:dailyItems(),id:'DAY|'+today(),back:'home',mon:{name:'每日怪',svg:monsterSVG(77,(new Date().getDate()*23)%360,false)},monId:null,again:startDaily})}
+
+/* ================= story news ================= */
+const storyUnlocked=()=>EZ.story?EZ.story.filter(c=>totalStars()>=c.need).length:0;
+function storyNews(){if(!EZ.story)return '';const n=storyUnlocked();if(n>(S.story.seen||0)){S.story.seen=n;save();return `<div class="reward">冒险故事 <b>第 ${n} 章</b> 解锁了！<button class="say" type="button" data-story="${n-1}">去看看</button></div>`}return ''}
+app.addEventListener('click',e=>{const b=e.target.closest('[data-story]');if(b&&!b.closest('svg'))viewChapter(+b.dataset.story)});
+
+/* ================= 听力理解 ================= */
+let playing=false;
+function playLines(lines,rate,onLine,onEnd){
+  if(!canSpeak){soundTip(true);return false}
+  const start=()=>{loadV();const v=pickVoice();const who=[...new Set(lines.map(l=>l[0]))];
+    lines.forEach((l,i)=>{const u=new SpeechSynthesisUtterance(l[1]);u.lang='zh-CN';if(v)u.voice=v;u.rate=rate;
+      const wi=who.indexOf(l[0]);u.pitch=who.length===1?1:(wi%2?0.8:1.25);
+      u.onstart=()=>{heard=true;playing=true;onLine(i)};if(i===lines.length-1)u.onend=()=>{playing=false;onEnd()};u.onerror=()=>{playing=false;onEnd()};speechSynthesis.speak(u)});
+    setTimeout(()=>{if(!heard)soundTip()},2500)};
+  try{if(speechSynthesis.speaking||speechSynthesis.pending){speechSynthesis.cancel();setTimeout(start,150)}else start()}catch(e){soundTip(true);return false}
+  return true;
+}
+function startListen(sid,prev){
+  leaveHash();stopWriter();try{speechSynthesis.cancel()}catch(e){}
+  const T=PS.find(t=>t.sets.some(x=>x.id===sid)),set=T.sets.find(x=>x.id===sid),id='PS|'+sid,N=set.qs.length;
+  const opts=set.qs.map(q=>shuffle(q.o.map((o,i)=>({o,en:q.oen[i],ok:i===q.a}))));
+  const st={mode:prev?'practice':(T.id==='t3'?'exam':'practice'),plays:0,slow:T.id==='t1',script:!canSpeak,scriptUsed:false,pick:Array(N).fill(null),val:Array(N).fill(0),lock:Array(N).fill(false),cur:-1,over:false};
+  if(prev)prev.val.forEach((v,n)=>{if(v===1){st.lock[n]=true;st.val[n]=1;st.pick[n]=opts[n].findIndex(x=>x.ok)}});
+  const lv0=heroLv(),g0=gearOwned();
+  const B=makeBattle(psMon(sid),id,N-st.lock.filter(Boolean).length||1,true);
+  const maxPlays=()=>st.mode==='exam'?2:Infinity;
+  function scriptHTML(){return set.lines.map((l,i)=>{const pys=l[2].split(/\s+/);let k=0;
+    return `<p class="dl ${st.cur===i?'on':''}" data-line="${i}"><span class="who">${esc(l[0])}：</span>${[...l[1]].map(c=>isHan(c)?`<ruby>${c}<rt>${pys[k++]||''}</rt></ruby>`:esc(c)).join('')}</p><div class="en">${esc(l[3])}</div>`}).join('')}
+  function frame(){
+    app.innerHTML=`<div class="stage rd ${(S.set.py||T.id==='t1')?'':'nopy'} ${S.set.en?'':'noen'}" id="rd">
+     <div class="topbar"><button class="ghost" id="quit">← 退出</button><span class="muted">PSLE 备考 · ${T.name} · 听力理解</span></div>
+     ${B?arenaHTML(B):''}
+     <h2 class="kai" style="margin:12px 0 6px;font-size:28px">${esc(set.title)} <span class="en" style="font-size:15px;font-family:'Noto Sans SC',sans-serif;font-weight:400">${esc(set.en)}</span></h2>
+     <div class="row" style="margin-bottom:8px"><button class="tog" id="pyT" aria-pressed="${!!(S.set.py||T.id==='t1')}">拼音</button><button class="tog" id="enT" aria-pressed="${S.set.en}">英文</button>
+      ${!st.plays&&!prev&&!st.over?`<span id="modes" class="row"><span class="note" style="margin-left:6px">做法：</span><button class="tog" id="mP" aria-pressed="${st.mode==='practice'}">练习（可以重听、看文字）</button><button class="tog" id="mE" aria-pressed="${st.mode==='exam'}">考试（只听两次）</button></span>`:''}</div>
+     <div class="card listen"><p class="note" style="margin:0 0 10px"><b>做法：</b>先看下面的问题，知道要听什么，再按“播放”。${st.mode==='exam'?'考试模式只能听两次，没有文字。':'听不清楚可以用“慢速”再听一次。'}</p>
+      <div class="row"><button class="pri big-play" id="play">${playing?'■ 停止':'▶ 播放录音'}</button>
+       <button class="tog" id="slow" aria-pressed="${st.slow}">慢速</button>
+       <span class="note" id="pc">已听 ${st.plays} 次${st.mode==='exam'?' / 2':''}</span></div>
+      ${st.mode==='practice'&&!st.over?`<div class="row" style="margin-top:10px"><button class="say" id="showS">${st.script?'收起文字':st.scriptUsed?'再看文字':'看文字（看了以后，这次答对算半分）'}</button></div>`:''}
+      ${!canSpeak?'<p class="hintbox" style="margin-top:10px">这个浏览器不能播放录音，所以直接显示文字，不扣分。请用 Safari 或 Chrome 打开网站来练习听力。</p>':''}
+      <div class="passage kai" id="script" ${st.script||st.over?'':'hidden'} style="margin-top:12px">${scriptHTML()}</div></div>
+     <h3 style="margin-top:18px">问题</h3>
+     <div id="qs">${set.qs.map((q,n)=>`<div class="psx" id="lq${n}"><div><b>${n+1}.</b> <span class="kai" style="font-size:19px">${S.set.py||T.id==='t1'?rubyLine(q.q):esc(q.q)}</span> ${st.lock[n]?'<span class="note">（上次已答对）</span>':''}</div><div class="qen">${esc(q.en)}</div>
+       <div class="opts psopts">${opts[n].map((x,j)=>`<button class="opt pso ${st.pick[n]===j?'sel':''} ${st.over||st.lock[n]?(x.ok?'ok':st.pick[n]===j?'bad':''):''}" data-n="${n}" data-j="${j}" ${st.over||st.lock[n]?'disabled':''}>${esc(x.o)}<small class="qen">${esc(x.en)}</small></button>`).join('')}</div>
+       ${st.over&&!st.lock[n]?`<div class="why"><b>${st.val[n]>0?'✓ 答对了':'✗ 正确答案：'+esc(set.qs[n].o[set.qs[n].a])}</b>　${esc(set.qs[n].why)}<div class="wen">${esc(set.qs[n].wen)}</div></div>`:''}</div>`).join('')}</div>
+     ${st.over?'':`<div class="row" style="margin-top:12px"><button class="pri" id="lsub">交卷</button><span class="note" id="lsm"></span></div>`}
+     <div id="rw"></div></div>`;
+    if(B)drawBattle(B);
+    const rd=$('#rd');
+    $('#quit').onclick=()=>{try{speechSynthesis.cancel()}catch(e){}go('psle')};
+    $('#pyT').onclick=e=>{const on=rd.classList.toggle('nopy');e.currentTarget.setAttribute('aria-pressed',String(!on));S.set.py=!on;save()};
+    $('#enT').onclick=e=>{const on=rd.classList.toggle('noen');e.currentTarget.setAttribute('aria-pressed',String(!on));S.set.en=!on;save()};
+    if($('#mP')){$('#mP').onclick=()=>{st.mode='practice';frame()};$('#mE').onclick=()=>{st.mode='exam';st.script=false;frame()}}
+    $('#slow').onclick=e=>{st.slow=!st.slow;e.currentTarget.setAttribute('aria-pressed',String(st.slow))};
+    $('#play').onclick=()=>{
+      if(playing){try{speechSynthesis.cancel()}catch(e){}playing=false;$('#play').textContent='▶ 播放录音';return}
+      if(st.plays>=maxPlays()){$('#pc').textContent='考试模式只能听两次。';return}
+      const ok=playLines(set.lines,st.slow?.6:.85,i=>{st.cur=i;app.querySelectorAll('#script .dl').forEach(p=>p.classList.toggle('on',+p.dataset.line===i))},()=>{st.cur=-1;const b=$('#play');if(b)b.textContent='▶ 播放录音';app.querySelectorAll('#script .dl').forEach(p=>p.classList.remove('on'))});
+      if(ok){st.plays++;$('#pc').textContent=`已听 ${st.plays} 次${st.mode==='exam'?' / 2':''}`;$('#play').textContent='■ 停止';const md=$('#modes');if(md)md.remove()}};
+    if($('#showS'))$('#showS').onclick=()=>{st.script=!st.script;if(st.script&&canSpeak)st.scriptUsed=true;frame()};
+    app.querySelectorAll('#qs .pso').forEach(b=>b.onclick=()=>{const n=+b.dataset.n;st.pick[n]=+b.dataset.j;app.querySelectorAll(`#lq${n} .pso`).forEach(x=>x.classList.toggle('sel',x===b))});
+    if($('#lsub')){let warned=false;$('#lsub').onclick=()=>{const left=st.pick.filter(x=>x==null).length;if(left&&!warned){warned=true;$('#lsm').textContent=`还有 ${left} 题没有选。再按一次就交卷。`;return}
+      try{speechSynthesis.cancel()}catch(e){}
+      const anim=[];set.qs.forEach((q,n)=>{if(st.lock[n])return;const ok=st.pick[n]!=null&&opts[n][st.pick[n]].ok;st.val[n]=ok?(st.scriptUsed?.5:1):0;anim.push(st.val[n])});
+      st.over=true;st.script=true;const pct=st.val.reduce((a,b)=>a+b,0)/N;record(id,pct);frame();
+      const show=()=>{const rw=endBattle(B,lv0,g0);const got=st.val.reduce((a,b)=>a+b,0);
+        $('#rw').innerHTML=`<div class="card sum" style="margin-top:14px">${starHtml(starsOf(pct))}<p style="font-size:20px;margin:6px 0">得分 ${Math.round(got*10)/10} / ${N}</p>${rw}${storyNews()}${newBadge?`<div class="reward">新徽章：${BADGES.find(x=>x[0]===newBadge)[1]}</div>`:''}
+          ${st.scriptUsed?'<p class="note">这次看了文字，答对的题算半分。下次试试先只听。</p>':''}
+          <div class="row" style="justify-content:center;margin-top:12px">${st.val.some(v=>v<1)?`<button class="pri" id="redo">只改错的题（${st.val.filter(v=>v<1).length}）</button>`:''}<button id="again">再做一次</button><button ${st.val.some(v=>v<1)?'':'class="pri"'} id="ret">返回 PSLE 备考</button></div></div>`;newBadge=null;
+        if($('#redo'))$('#redo').onclick=()=>startListen(sid,{val:st.val.slice()});
+        $('#again').onclick=()=>startListen(sid);$('#ret').onclick=()=>go('psle');$('#rw').scrollIntoView({behavior:'smooth',block:'start'})};
+      if(B&&anim.length){$('#arena').scrollIntoView({behavior:'smooth',block:'center'});anim.forEach((v,k)=>setTimeout(()=>battleTurn(B,v),300+k*700));setTimeout(show,500+anim.length*700)}else show()}}
+  }
+  frame();
+}
+
+/* ================= 冒险地图 ================= */
+const HERO_PY={mo:'mò mò',zhi:'zhǐ zhǐ',shi:'shī shī'};
+const NODES=[[150,935],[440,862],[190,785],[450,705],[170,625],[430,545],[170,465],[440,385],[190,305],[430,225],[180,145],[420,62]];
+function sceneSVG(kind,hue){
+  const night=kind==='stars'||kind==='storm'||kind==='camp';
+  let s=`<svg viewBox="0 0 600 220" class="scene" aria-hidden="true"><defs><linearGradient id="sk${kind}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${night?`hsl(${hue} 45% 18%)`:`hsl(${hue} 70% 86%)`}"/><stop offset="1" stop-color="${night?`hsl(${hue} 40% 32%)`:`hsl(${hue} 60% 95%)`}"/></linearGradient></defs><rect width="600" height="220" fill="url(#sk${kind})"/>`;
+  if(night)for(let i=0;i<40;i++)s+=`<circle cx="${(i*137)%600}" cy="${(i*53)%120+5}" r="${i%5?1.2:2.2}" fill="#fff" opacity=".8"/>`;else s+='<circle cx="520" cy="50" r="26" fill="#ffd86b"/>';
+  const ground=`hsl(${hue} 35% ${night?28:55}%)`;
+  if(kind!=='sea'&&kind!=='island')s+=`<path d="M0 170Q150 140 300 165T600 158V220H0Z" fill="${ground}"/>`;
+  if(kind==='village')[110,240,370].forEach((x,i)=>{s+=`<rect x="${x}" y="${120+i*4}" width="80" height="55" fill="hsl(${hue+i*30} 50% 70%)"/><path d="M${x-8} ${122+i*4}L${x+40} ${88+i*4}L${x+88} ${122+i*4}Z" fill="hsl(${hue} 55% 40%)"/><rect x="${x+30}" y="${145+i*4}" width="20" height="30" fill="hsl(${hue} 40% 35%)"/>`});
+  if(kind==='forest')for(let i=0;i<9;i++){const x=40+i*65,h=60+(i%3)*20;s+=`<rect x="${x-5}" y="${165-12}" width="10" height="16" fill="#7a5230"/><path d="M${x-28} 155L${x} ${155-h}L${x+28} 155Z" fill="hsl(${110+i*6} 45% ${30+(i%2)*8}%)"/>`}
+  if(kind==='river'){s+='<path d="M0 185Q150 165 300 185T600 180V205Q450 190 300 205T0 205Z" fill="#5aa7d8"/><path d="M220 186Q300 130 380 186" stroke="#8a5a2b" stroke-width="10" fill="none"/>'}
+  if(kind==='city'||kind==='gate'){s+=`<rect x="60" y="100" width="480" height="70" fill="hsl(${hue} 25% 62%)"/>`;for(let x=60;x<540;x+=40)s+=`<rect x="${x}" y="88" width="24" height="14" fill="hsl(${hue} 25% 62%)"/>`;s+=`<path d="M255 170V125A45 45 0 0 1 345 125V170Z" fill="hsl(${hue} 40% 25%)"/><rect x="40" y="60" width="50" height="110" fill="hsl(${hue} 30% 52%)"/><rect x="510" y="60" width="50" height="110" fill="hsl(${hue} 30% 52%)"/>`;if(kind==='gate')s+='<path d="M65 60V20L95 30L65 40" fill="#cf3e35"/><path d="M535 60V20L565 30L535 40" fill="#cf3e35"/>'}
+  if(kind==='mountain')s+=`<path d="M40 175L190 40L340 175Z" fill="hsl(${hue} 20% 50%)"/><path d="M150 76L190 40L230 76L210 70L190 80L170 70Z" fill="#fff"/><path d="M260 175L410 70L560 175Z" fill="hsl(${hue} 20% 42%)"/><path d="M380 92L410 70L440 92L425 88L410 96L395 88Z" fill="#fff"/>`;
+  if(kind==='camp')s+='<path d="M90 172L170 90L250 172Z" fill="#c8823a"/><path d="M160 172L170 120L180 172Z" fill="#5a3a1a"/><path d="M360 172L430 105L500 172Z" fill="#8a5bb0"/><path d="M290 172L300 140L310 172Z" fill="#ff9d2e"/><path d="M296 172L300 152L304 172Z" fill="#ffe066"/>';
+  if(kind==='sea'||kind==='island'){s+='<rect y="150" width="600" height="70" fill="#3f8fc8"/><path d="M0 155Q30 148 60 155T120 155T180 155T240 155T300 155T360 155T420 155T480 155T540 155T600 155" stroke="#bfe3ff" stroke-width="3" fill="none"/>';
+    if(kind==='sea')s+='<path d="M220 150H360L340 172H240Z" fill="#8a5a2b"/><path d="M290 150V80L340 140Z" fill="#fff"/><rect x="480" y="70" width="18" height="80" fill="#fff" opacity=".6"/>';
+    else s+='<ellipse cx="300" cy="158" rx="160" ry="22" fill="#e2c27a"/><rect x="380" y="70" width="26" height="85" fill="#fff"/><rect x="380" y="90" width="26" height="12" fill="#cf3e35"/><path d="M374 70H412L393 50Z" fill="#cf3e35"/><circle cx="393" cy="62" r="5" fill="#ffd86b"/>'}
+  if(kind==='storm'){s+='<ellipse cx="180" cy="50" rx="110" ry="34" fill="#4a4f63"/><ellipse cx="400" cy="45" rx="130" ry="38" fill="#3a3f52"/><path d="M300 70L280 115H300L285 155" stroke="#ffe066" stroke-width="5" fill="none"/>';for(let i=0;i<22;i++)s+=`<line x1="${30+i*27}" y1="${85+(i%3)*10}" x2="${20+i*27}" y2="${110+(i%3)*10}" stroke="#9fc3e6" stroke-width="2"/>`}
+  if(kind==='cave')s+=`<path d="M60 175Q90 40 300 40T540 175Z" fill="hsl(${hue} 15% 30%)"/><path d="M200 175Q220 90 300 90T400 175Z" fill="hsl(${hue} 20% 14%)"/><rect x="255" y="140" width="90" height="35" rx="4" fill="#b7861b"/><path d="M255 140Q300 115 345 140Z" fill="#e9b949"/>`;
+  if(kind==='stars')s+='<path d="M300 70C270 40 220 60 240 100C255 130 300 150 300 150C300 150 345 130 360 100C380 60 330 40 300 70Z" fill="#ef6a5f"/>';
+  if(S.hero.type)s+=heroSVG(S.hero.type,gearOwned()).replace('<svg ',`<svg x="24" y="${kind==='sea'||kind==='island'?92:96}" width="96" height="96" `);
+  return s+'</svg>';
+}
+function viewStory(){
+  const ST=EZ.story,ts=totalStars(),un=storyUnlocked();
+  if(un>(S.story.seen||0)){S.story.seen=un;save()}
+  const nextC=ST.find(c=>ts<c.need);const cur=Math.max(0,un-1);
+  let svg=`<svg viewBox="0 0 600 1000" class="smap" role="img" aria-label="冒险地图"><rect width="600" height="1000" rx="24" style="fill:light-dark(#f6efe0,#1f1c17)"/>`;
+  [[0,260,200],[260,500,120],[500,760,30],[760,1000,280]].forEach(([a,b,h])=>svg+=`<rect y="${a}" width="600" height="${b-a}" fill="hsl(${h} 45% 60%)" opacity=".13"/>`);
+  svg+=`<polyline points="${NODES.map(p=>p.join(',')).join(' ')}" fill="none" style="stroke:light-dark(#c9b48a,#6b5c40)" stroke-width="14" stroke-linejoin="round" stroke-linecap="round"/><polyline points="${NODES.map(p=>p.join(',')).join(' ')}" fill="none" style="stroke:light-dark(#fff,#2b261f)" stroke-width="3" stroke-dasharray="10 12"/>`;
+  ST.forEach((c,k)=>{const [x,y]=NODES[k];const open=ts>=c.need,read=S.story.read.includes(k);
+    svg+=`<g class="snode ${open?'open':''}" data-story="${k}" tabindex="${open?0:-1}" role="button" aria-label="第${k+1}章 ${c.t}${open?'':'，需要'+c.need+'颗星'}">
+     <circle cx="${x}" cy="${y}" r="36" fill="${!open?'light-dark(#cfcfcf,#444)':read?'light-dark(#2b7a4b,#3f9a66)':'#e9b949'}" stroke="#fff" stroke-width="4"/>
+     <text x="${x}" y="${y+9}" text-anchor="middle" font-size="26" font-weight="700" fill="${open?'#fff':'light-dark(#777,#aaa)'}">${read?'✓':k+1}</text>
+     <text x="${x}" y="${y+60}" text-anchor="middle" font-size="19" style="fill:light-dark(#3a3024,#e8dcc3)">${open?c.t:'★'+c.need}</text></g>`});
+  const [hx,hy]=NODES[cur];if(S.hero.type&&un)svg+=heroSVG(S.hero.type,gearOwned()).replace('<svg ',`<svg x="${hx+(hx<300?40:-110)}" y="${hy-60}" width="72" height="72" `);
+  svg+='</svg>';
+  app.innerHTML=`<div class="row" style="justify-content:space-between"><h2 style="margin:0">冒险地图</h2><button class="ghost" id="back">← 返回</button></div>
+   <p class="muted">${HEROES[S.hero.type]?HEROES[S.hero.type].name:'英雄'}要把字怪抢走的字找回来！做练习得到星星，就能解锁新的章节。你现在有 <b>★${ts}</b>。</p>
+   <div class="storywrap">${svg}<div class="card">
+    ${nextC?`<h3>下一章：第 ${ST.indexOf(nextC)+1} 章 《${nextC.t}》</h3><div class="meter xp"><i style="width:${Math.round(ts/nextC.need*100)}%"></i></div><p class="note">还差 ★${nextC.need-ts}。每日一练、复习和 PSLE 备考都能得到星星。</p><button class="pri" id="earn">去赚星星</button>`:'<h3>所有章节都解锁了！</h3><p class="note">你完成了整个冒险，真了不起！</p>'}
+    <h3 style="margin-top:18px">章节</h3><div class="slist">${ST.map((c,k)=>`<button data-story="${k}" ${ts>=c.need?'':'disabled'}><b>第 ${k+1} 章</b> ${ts>=c.need?esc(c.t):'★'+c.need+' 解锁'}${S.story.read.includes(k)?' ✓':''}</button>`).join('')}</div></div></div>`;
+  $('#back').onclick=()=>go('home');if($('#earn'))$('#earn').onclick=()=>go('home');
+  app.querySelectorAll('svg [data-story]').forEach(g=>{const o=()=>{const k=+g.dataset.story;if(totalStars()>=ST[k].need)viewChapter(k)};g.addEventListener('click',o);g.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();o()}})});
+}
+function viewChapter(k){
+  leaveHash();try{speechSynthesis.cancel()}catch(e){}
+  const ST=EZ.story,c=ST[k];if(!c||totalStars()<c.need)return viewStory();
+  const H=HEROES[S.hero.type]?HEROES[S.hero.type].name:'墨墨',HP=HERO_PY[S.hero.type]||'mò mò';
+  const text=c.text.replace(/\{H\}/g,H),pys=c.py.replace(/\{H\}/g,HP).trim().split(/\s+/),ens=c.ens.map(x=>x.replace(/\{H\}/g,H));
+  if(!S.story.read.includes(k)){S.story.read.push(k);checkBadges();save()}
+  let p=0;const body=text.split('|').map((sen,i)=>`<span class="sen">${[...sen].map(ch=>isHan(ch)?`<ruby>${ch}<rt>${pys[p++]||''}</rt></ruby>`:esc(ch)).join('')}</span>`).join('');
+  const q=c.q,qText=q.q.replace(/\{H\}/g,H),done=S.story.quiz.includes(k);const qo=shuffle(q.o.map((o,i)=>({o,en:q.oen[i],ok:i===q.a})));
+  const next=ST[k+1],nextOpen=next&&totalStars()>=next.need;
+  app.innerHTML=`<div class="stage rd ${S.set.py?'':'nopy'} ${S.set.en?'':'noen'}" id="rd"><div class="topbar"><button class="ghost" id="back">← 冒险地图</button><span class="muted">第 ${k+1} 章 / ${ST.length}</span></div>
+   <div class="scenebox">${sceneSVG(c.scene,c.hue)}</div>
+   <h2 class="kai" style="margin:14px 0 6px;font-size:30px">第 ${k+1} 章 ${esc(c.t)} <span class="en" style="font-size:16px;font-family:'Noto Sans SC',sans-serif;font-weight:400">${esc(c.en)}</span></h2>
+   <div class="row" style="margin-bottom:10px"><button class="tog" id="pyT" aria-pressed="${S.set.py}">拼音</button><button class="tog" id="enT" aria-pressed="${S.set.en}">英文</button>${sayBtn(text.replace(/\|/g,''),'听这一章')}</div>
+   <div class="passage kai"><p>${body}</p><div class="en">${ens.map(esc).join(' ')}</div></div>
+   <div class="card" style="margin-top:16px"><h3>小问题 <span class="note" style="font-weight:400">${done?'已经答对了 ✓':'第一次答对，英雄得到 20 点经验'}</span></h3>
+    <p class="kai" style="font-size:19px;margin:6px 0">${S.set.py?rubyLine(qText):esc(qText)}</p><div class="qen">${esc(q.en.replace(/\{H\}/g,H))}</div>
+    <div class="opts psopts">${qo.map((x,j)=>`<button class="opt pso" data-j="${j}">${esc(x.o)}<small class="qen">${esc(x.en)}</small></button>`).join('')}</div><div class="fb" id="sfb"></div></div>
+   <div class="row" style="justify-content:space-between;margin-top:16px">${k>0?`<button id="prevC">← 第 ${k} 章</button>`:'<span></span>'}
+    ${next?(nextOpen?`<button class="pri" id="nextC">第 ${k+2} 章 →</button>`:`<span class="note">还差 ★${next.need-totalStars()} 解锁第 ${k+2} 章</span>`):'<span class="reward">冒险完成！</span>'}</div></div>`;
+  const rd=$('#rd');
+  $('#back').onclick=()=>{try{speechSynthesis.cancel()}catch(e){}go('story')};
+  $('#pyT').onclick=e=>{const on=rd.classList.toggle('nopy');e.currentTarget.setAttribute('aria-pressed',String(!on));S.set.py=!on;save()};
+  $('#enT').onclick=e=>{const on=rd.classList.toggle('noen');e.currentTarget.setAttribute('aria-pressed',String(!on));S.set.en=!on;save()};
+  if($('#prevC'))$('#prevC').onclick=()=>viewChapter(k-1);if($('#nextC'))$('#nextC').onclick=()=>viewChapter(k+1);
+  app.querySelectorAll('.pso').forEach(b=>b.onclick=()=>{const x=qo[+b.dataset.j];const fb=$('#sfb');
+    if(x.ok){app.querySelectorAll('.pso').forEach(y=>y.disabled=true);b.classList.add('ok');fb.className='fb ok';
+      if(!S.story.quiz.includes(k)){S.story.quiz.push(k);S.hero.xp+=20;save();chips();fb.textContent='答对了！英雄得到 20 点经验。'}else fb.textContent='答对了！'}
+    else{b.classList.add('bad');b.disabled=true;fb.className='fb bad';fb.textContent='再读一读故事，试试别的答案。'}});
+  window.scrollTo(0,0);
+}
+
 function viewHero(){
   const all=[];for(const L of LEVELS){if(!CONTENT[L.id])continue;CONTENT[L.id].lessons.forEach((l,i)=>all.push([`${L.id}|${i}`,monFor(L.id,i),`${L.name} ${l.n}`]));if(CONTENT[L.id].colloc&&CONTENT[L.id].colloc.length)all.push([`${L.id}|c`,collMon(L.id),`${L.name} 词语搭配`]);if(CONTENT[L.id].grammar&&CONTENT[L.id].grammar.length)all.push([`${L.id}|g`,gramMon(L.id),`${L.name} 语法练习`]);CONTENT[L.id].passages.forEach((p,i)=>all.push([`${L.id}|p${i}`,bossFor(L.id,i),`${L.name} 阅读${i+1}`]))}
+  psAll().forEach(x=>all.push([x.id,psMon(x.s.id),`PSLE ${x.T.name}`]));
   app.innerHTML=`<div class="row" style="justify-content:space-between"><h2 style="margin:0">我的英雄</h2><button class="ghost" id="back">← 返回</button></div>
    <div class="home" style="margin-top:14px"><div class="card">${heroCard(true)}
      <h3 style="margin-top:18px">升级 <span class="muted" style="font-size:15px;font-weight:400">升级点：<b id="upn">${upPoints()}</b></span></h3>
@@ -503,13 +851,15 @@ function viewHero(){
 function viewProgress(){
   const rv=Object.entries(S.review);const st=skillStats();
   const pcs=Object.entries(st).map(([k,t])=>[k,t[2]?t[0]/t[2]:null]).filter(x=>x[1]!==null).sort((a,b)=>a[1]-b[1]);
-  const weak=pcs.length>1?{r:'认读',w:'写字',p:'阅读',g:'语文应用'}[pcs[0][0]]:null;
+  const weak=pcs.length>1?{r:'认读',w:'写字',p:'阅读',g:'语文应用',e:'PSLE 备考'}[pcs[0][0]]:null;
   app.innerHTML=`<div class="row" style="justify-content:space-between"><h2 style="margin:0">${esc(S.name||'我')}的进度</h2><button class="ghost" id="back">← 返回</button></div>
    ${weak?`<p>最需要加强的是 <strong>${weak}</strong>。</p>`:'<p class="muted">多做几个练习，这里会告诉你哪一方面最需要加强。</p>'}
    <div class="scroll"><table><thead><tr><th>级别</th><th class="num">认读</th><th class="num">写字</th><th class="num">阅读</th><th class="num">语文应用</th><th class="num">星星</th></tr></thead><tbody>
    ${LEVELS.filter(L=>CONTENT[L.id]).map(L=>{const a=actList(L.id);const f=k=>{const xs=a.filter(x=>(x.kind===k||(k==='g'&&x.kind==='c'))&&x.id in S.best);return xs.length?Math.round(xs.reduce((s,x)=>s+S.best[x.id],0)/xs.length*100)+'%':'—'};const got=a.reduce((s,x)=>s+(S.stars[x.id]||0),0);
      return `<tr><td class="kai">${L.name}</td><td class="num">${f('r')}</td><td class="num">${f('w')}</td><td class="num">${f('p')}</td><td class="num">${f('g')}</td><td class="num">${got} / ${a.length*3}</td></tr>`}).join('')}
    </tbody></table></div>
+   ${PS.length?`<h2 style="margin-top:28px">PSLE 备考</h2><div class="scroll"><table><thead><tr><th>程度</th><th class="num">短文填充</th><th class="num">完成对话</th><th class="num">听力理解</th><th class="num">星星</th></tr></thead><tbody>
+   ${PS.map(T=>{const f=t=>{const xs=T.sets.filter(s=>s.type===t&&('PS|'+s.id) in S.best);return xs.length?Math.round(xs.reduce((a,s)=>a+S.best['PS|'+s.id],0)/xs.length*100)+'%':'—'};const got=T.sets.reduce((a,s)=>a+(S.stars['PS|'+s.id]||0),0);return `<tr><td>${T.name}</td><td class="num">${f('cloze')}</td><td class="num">${f('dialog')}</td><td class="num">${f('listen')}</td><td class="num">${got} / ${T.sets.length*3}</td></tr>`}).join('')}</tbody></table></div>`:''}
    <h2 style="margin-top:28px">复习本</h2>
    ${rv.length?`<p class="muted">做错的字会放在这里。连续答对两次，就会自动拿掉。</p><div class="revchars kai" style="justify-content:flex-start">${rv.map(([c])=>`<span>${c}</span>`).join('')}</div><button class="pri" id="rvBtn">开始复习</button>`:'<p class="muted">复习本是空的。</p>'}
    <h2 style="margin-top:28px">学习帮助</h2>
@@ -532,7 +882,7 @@ function viewProgress(){
   let armed=false;
   $('#rs').onclick=()=>{const d=readCode($('#code').value);if(!d){$('#rsm').textContent='进度码不正确，请再检查。';return}
     if(!armed){armed=true;$('#rsm').textContent=`这是“${d.name||'无名'}”的进度，会换掉现在的进度。再按一次确定。`;return}
-    S={...blank(),...d,hero:{...blank().hero,...(d.hero||{}),up:{atk:0,hp:0,life:0,...((d.hero||{}).up||{})}},set:{...blank().set,...(d.set||{})}};save();chips();render()};
+    S={...blank(),...d,hero:{...blank().hero,...(d.hero||{}),up:{atk:0,hp:0,life:0,...((d.hero||{}).up||{})}},set:{...blank().set,...(d.set||{})},story:{read:[],quiz:[],seen:0,...(d.story||{})}};save();chips();render()};
   $('#nmb').onclick=()=>{const v=$('#nm2').value.trim();if(v){S.name=v;save();chips();render()}};
 }
 function makeCode(){const d={...S,log:S.log.slice(-80)};return 'EZ1-'+btoa(unescape(encodeURIComponent(JSON.stringify(d))))}
@@ -541,7 +891,7 @@ function readCode(c){try{c=c.trim();if(!c.startsWith('EZ1-'))return null;const d
 /* ================= battle ================= */
 function makeBattle(mon,monId,totalItems,boss){
   if(!S.set.battle||!S.hero.type)return null;
-  const lvk=monId?lvIdx(monId.split('|')[0]):0;const max=Math.max(20,Math.round(totalItems*10*(.8+.04*lvk)));
+  const L0=monId?LEVELS.find(l=>l.id===monId.split('|')[0]):null;const lvk=L0?L0.k:(monId?9:0);const max=Math.max(20,Math.round(totalItems*10*(.8+.04*lvk)));
   const hit=8+lvk+(boss?3:0);
   return {mon,monId,boss,max,hp:max,hearts:heroHearts(),maxH:heroHearts(),hhp:heroHP(),hmax:heroHP(),hit,combo:0,dodge:gearOwned().includes('cape'),xp:0,won:false,ko:false};
 }
@@ -623,14 +973,14 @@ function leaveHash(){history.replaceState(null,'',location.pathname+location.sea
 
 function run(R){
   leaveHash();
-  R.k=0;R.score=0;R.wrong=[];R.wt=new Set();R.lv0=heroLv();R.g0=gearOwned();
+  R.k=0;R.score=0;R.vals=[];R.base=R.base||0;R.total=R.total||R.items.length;R.wrong=[];R.wt=new Set();R.lv0=heroLv();R.g0=gearOwned();
   const B=makeBattle(R.mon,R.monId,R.items.length,false);
   app.innerHTML=`<div class="stage"><div class="topbar"><button class="ghost" id="quit">← 退出</button><span class="meter"><i id="pbar" style="width:0"></i></span><span class="note" id="pnum"></span></div>
    <p class="muted" style="margin:8px 0 0">${esc(R.title)}</p>${B?arenaHTML(B):''}<div id="qa"></div></div>`;
   if(B)drawBattle(B);
   $('#quit').onclick=()=>go(R.back);
   const next=()=>{stopWriter();R.k<R.items.length?show():finish()};
-  const done=(val,ch,lv,kind)=>{R.score+=val;if(val<1){if(!R.wrong.includes(ch))R.wrong.push(ch);missed(ch,lv,kind)}else hit(ch);save();battleTurn(B,val)};
+  const done=(val,ch,lv,kind)=>{R.score+=val;R.vals[R.k]=val;if(val<1){if(!R.wrong.includes(ch))R.wrong.push(ch);missed(ch,lv,kind)}else hit(ch);save();battleTurn(B,val)};
   const frame=inner=>{$('#pbar').style.width=R.k/R.items.length*100+'%';$('#pnum').textContent=`${R.k+1} / ${R.items.length}`;$('#qa').innerHTML=inner};
   const nextBtn=()=>{const n=$('#nx');n.hidden=false;n.focus({preventScroll:true});n.onclick=next};
   function show(){
@@ -671,7 +1021,7 @@ function run(R){
     $('#hintB').onclick=()=>{hinted=true;$('#hintB').disabled=true;$('#hintT').innerHTML=`<div class="hintbox">${esc(g.en)}<span class="note">　（用了提示，这题算半分）</span></div>`};
     const end=(ok,part)=>{if(over)return;over=true;$('#hintB').disabled=true;const fb=$('#fb');fb.className='fb '+(ok?'ok':'bad');
       fb.innerHTML=(ok?(hinted?'答对了（用了提示，算半分）。':'答对了！'):part!==undefined?`配对正确 ${Math.round(part*g.L.length)} / ${g.L.length}。`:(g.t==='fix'?`错字是“${esc(g.bad)}”，应该改成“${esc(g.right)}”。`:'还不对。'))+`<div class="muted" style="font-weight:400">${g.t==='match'?'参考答案':'正确的句子'}：<span class="kai">${esc(good)}</span></div>`;
-      const val=(part!==undefined?part:ok?1:0)*(hinted?.5:1);R.score+=val;if(val<1)R.wt.add(g.topic);save();battleTurn(B,val);R.k++;nextBtn();if(ok)say(good)};
+      const val=(part!==undefined?part:ok?1:0)*(hinted?.5:1);R.score+=val;R.vals[R.k]=val;if(val<1)R.wt.add(g.topic);save();battleTurn(B,val);R.k++;nextBtn();if(ok)say(good)};
     if(g.t==='pick')app.querySelectorAll('.gopt').forEach(b=>b.onclick=()=>{const ok=b.dataset.o===g.o[g.a];app.querySelectorAll('.gopt').forEach(x=>{x.disabled=true;if(x.dataset.o===g.o[g.a])x.classList.add('ok')});if(!ok)b.classList.add('bad');end(ok)});
     else if(g.t==='order'){const pick=[];const ans=$('#ans'),chk=$('#chk');
       const draw=()=>{ans.innerHTML=pick.map((i,k)=>`<button class="chipw" data-k="${k}">${esc(it.parts[i])}</button>`).join('')||'<span class="note">点下面的词语</span>';
@@ -719,21 +1069,27 @@ function run(R){
     $('#skip').onclick=()=>{try{w.cancelQuiz();w.showCharacter()}catch(e){}finishChar(0,`这个字是“${it.ch}”（${en(it.ch)}）。已放进复习本。`)};
   }
   function finish(){
-    const pct=R.items.length?R.score/R.items.length:0;const st=starsOf(pct);
+    const pct=R.total?(R.base+R.score)/R.total:0;const st=starsOf(pct);
+    const badIdx=R.items.map((_,i)=>i).filter(i=>(R.vals[i]||0)<1);
     if(R.id)record(R.id,pct);else{S.log.push({d:today(),a:'review',s:Math.round(pct*100)});checkBadges();save();chips()}
     const rw=endBattle(B,R.lv0,R.g0);
     const help=pct<.6&&(!S.set.py||!S.set.en);
     app.innerHTML=`<div class="stage sum"><h2>${esc(R.title)} · 完成</h2>
      ${R.id?starHtml(st):''}<p style="font-size:20px">答对 ${Math.round(R.score*10)/10} / ${R.items.length}</p>
+     ${R.redo?`<p class="muted">改正以后，这个练习的总分是 ${Math.round((R.base+R.score)*10)/10} / ${R.total}。</p>`:''}
+     ${storyNews()}
      ${rw?`<div>${rw}</div>`:''}
      ${R.wt.size?`<p class="muted">需要多练习：${[...R.wt].map(esc).join('、')}</p>`:''}
      ${R.items[0]&&R.items[0].type==='g'?'':R.wrong.length?`<p class="muted">这些字放进了复习本：</p><div class="revchars kai">${R.wrong.map(c=>`<span>${c}</span>`).join('')}</div>`:'<p class="muted">全部答对，没有新的字要复习。</p>'}
      ${newBadge?`<p>新徽章：<span class="reward">${BADGES.find(b=>b[0]===newBadge)[1]}</span></p>`:''}
      ${help?`<div class="card" style="text-align:left;margin:14px 0"><b>觉得有点难？</b> 可以打开拼音和英文帮助，再试一次。<div class="row" style="margin-top:8px"><button id="helpOn">打开帮助</button></div></div>`:''}
-     <div class="row" style="justify-content:center;margin-top:16px"><button id="again">再做一次</button><button class="pri" id="ret">返回</button></div></div>`;
+     <div class="row" style="justify-content:center;margin-top:16px">${badIdx.length?`<button class="pri" id="redo">只做错的题（${badIdx.length}）</button>`:''}<button id="again">再做一次</button><button ${badIdx.length?'':'class="pri"'} id="ret">返回</button></div>
+     ${badIdx.length?'<p class="note">只做错的题：答对了可以把分数和星星赢回来。</p>':''}</div>`;
     newBadge=null;
+    if(badIdx.length)$('#redo').onclick=()=>{const keep=R.items.reduce((a,_,i)=>a+(badIdx.includes(i)?0:(R.vals[i]||0)),0);
+      run({title:R.title.replace(/ · 改正错题$/,'')+' · 改正错题',items:badIdx.map(i=>refreshItem(R.items[i])),id:R.id,back:R.back,mon:R.mon,monId:R.monId,base:R.base+keep,total:R.total,again:R.again,redo:true})};
     if(help)$('#helpOn').onclick=e=>{S.set.py=true;S.set.en=true;save();e.target.textContent='已打开';e.target.disabled=true};
-    $('#again').onclick=()=>{R.id?startAct(actList(R.id.split('|')[0]).find(x=>x.id===R.id)):startReview()};
+    $('#again').onclick=()=>{R.again?R.again():R.id&&CONTENT[R.id.split('|')[0]]?startAct(actList(R.id.split('|')[0]).find(x=>x.id===R.id)):startReview()};
     $('#ret').onclick=()=>go(R.back);
   }
   show();
@@ -748,8 +1104,9 @@ function passageHTML(p){
 }
 const sentences=p=>p.text.replace(/\n/g,'|').split('|');
 function normalise(s){return s.replace(/[\s，。！？、,.!?“”"'‘’：:；;（）()]/g,'')}
-function startReading(lv,i){
+function startReading(lv,i,prev){
   leaveHash();
+  const locked=j=>!!(prev&&prev.vals[j]===1);
   const p=CONTENT[lv].passages[i],id=`${lv}|p${i}`;const lv0=heroLv(),g0=gearOwned();
   const scored=p.qs.filter(q=>q.t!=='self').length;
   const B=makeBattle(bossFor(lv,i),`${lv}|p${i}`,scored,true);
@@ -769,6 +1126,10 @@ function startReading(lv,i){
    <div class="row" style="margin-top:16px"><button class="pri" id="sub">交卷${B?'，发动攻击':''}</button><span class="note" id="subm"></span></div></form><div id="rw"></div></div>`;
   if(B)drawBattle(B);
   const rd=$('#rd');
+  if(prev)p.qs.forEach((q,j)=>{if(!locked(j))return;const box=app.querySelector(`.rq[data-j="${j}"]`);
+    box.querySelectorAll('input[type=radio]').forEach(x=>{x.checked=x.value===prev.ans[j];x.disabled=true});const ta=box.querySelector('textarea');if(ta){ta.value=prev.ans[j]||'';ta.disabled=true}
+    box.querySelector('.res').innerHTML='<div class="mark ok">✓ 上次已答对</div>'});
+  if(prev)$('#subm').textContent='上次答对的题已经锁好了，只要改错的题。';
   $('#quit').onclick=()=>go('level-'+lv.toLowerCase());
   $('#pyT').onclick=e=>{const on=rd.classList.toggle('nopy');e.currentTarget.setAttribute('aria-pressed',String(!on));S.set.py=!on;save()};
   $('#enT').onclick=e=>{const on=rd.classList.toggle('noen');e.currentTarget.setAttribute('aria-pressed',String(!on));S.set.en=!on;save()};
@@ -783,13 +1144,14 @@ function startReading(lv,i){
     say(c)};
   $('#rf').onsubmit=e=>{e.preventDefault();
     const fd=new FormData(e.target);
-    const empty=p.qs.filter((q,j)=>!String(fd.get('q'+j)||'').trim()).length;
+    const empty=p.qs.filter((q,j)=>!locked(j)&&!String(fd.get('q'+j)||'').trim()).length;const ans={},vq={};
     if(empty&&!e.target.dataset.warned){e.target.dataset.warned=1;$('#subm').textContent=`还有 ${empty} 题没有回答。再按一次就会交卷。`;return}
     let got=0,tot=0;const vals=[];
     p.qs.forEach((q,j)=>{const box=app.querySelector(`.rq[data-j="${j}"] .res`);const v=String(fd.get('q'+j)||'');
-      if(q.t==='mc'||q.t==='tf'){tot++;const right=q.t==='mc'?String(q.a):(q.a?'1':'0');const ok=v===right;if(ok)got++;vals.push(ok?1:0);
+      if(locked(j)){tot++;got++;vq[j]=1;ans[j]=prev.ans[j];return}ans[j]=v;
+      if(q.t==='mc'||q.t==='tf'){tot++;const right=q.t==='mc'?String(q.a):(q.a?'1':'0');const ok=v===right;if(ok)got++;vals.push(ok?1:0);vq[j]=ok?1:0;
         box.innerHTML=`<div class="mark ${ok?'ok':'bad'}">${ok?'✓ 答对了':'✗ 正确答案：'+esc(q.t==='mc'?q.o[q.a]:(q.a?'对':'错'))}</div>`}
-      else if(q.t==='open'){tot++;const a=normalise(v);const hits=q.keys.map(g=>!!a&&g.some(k=>a.includes(k)));const sc=hits.filter(Boolean).length/q.keys.length;got+=sc;vals.push(sc);
+      else if(q.t==='open'){tot++;const a=normalise(v);const hits=q.keys.map(g=>!!a&&g.some(k=>a.includes(k)));const sc=hits.filter(Boolean).length/q.keys.length;got+=sc;vals.push(sc);vq[j]=sc;
         box.innerHTML=`<div class="mark ${sc===1?'ok':sc>0?'part':'bad'}">${q.pts.map((t,k)=>`${hits[k]?'✓':'✗'} ${esc(t)}`).join('　')}<div class="model">参考答案：${esc(q.model)}</div></div>`}
       else{box.innerHTML=`<div class="mark part">自己检查：和参考答案比一比，勾出你做到的。<div class="model">参考答案：${esc(q.model)}</div>${q.pts.map(t=>`<label class="o" style="margin-top:6px"><input type="checkbox"> ${esc(t)}</label>`).join('')}<div class="note">这一题不算分。</div></div>`}
     });
@@ -798,7 +1160,9 @@ function startReading(lv,i){
     const sub=$('#sub');sub.disabled=true;
     const fin=()=>{const rw=endBattle(B,lv0,g0);sub.disabled=false;sub.textContent='完成，返回';sub.type='button';sub.onclick=()=>go('level-'+lv.toLowerCase());
       $('#subm').innerHTML=`得分 ${Math.round(got*10)/10} / ${tot}　${starHtml(starsOf(pct))}`;
-      $('#rw').innerHTML=`<div style="margin-top:12px">${rw}${newBadge?`<div class="reward">新徽章：${BADGES.find(b=>b[0]===newBadge)[1]}</div>`:''}</div>`;newBadge=null};
+      const bad=Object.keys(vq).filter(j=>vq[j]<1).length;
+      $('#rw').innerHTML=`<div style="margin-top:12px">${rw}${storyNews()}${newBadge?`<div class="reward">新徽章：${BADGES.find(b=>b[0]===newBadge)[1]}</div>`:''}${bad?`<div class="row" style="margin-top:10px"><button class="pri" id="redo">只改错的题（${bad}）</button><span class="note">答对了可以把分数赢回来。</span></div>`:''}</div>`;newBadge=null;
+      if(bad)$('#redo').onclick=()=>startReading(lv,i,{vals:vq,ans})};
     if(B){$('#arena').scrollIntoView({behavior:'smooth',block:'center'});vals.forEach((v,k)=>setTimeout(()=>battleTurn(B,v),400+k*800));setTimeout(()=>{fin();sub.scrollIntoView({behavior:'smooth',block:'center'})},600+vals.length*800)}
     else{fin();sub.scrollIntoView({behavior:'smooth',block:'center'})}
   };

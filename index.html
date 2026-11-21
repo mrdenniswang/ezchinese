@@ -64,17 +64,20 @@ h3{font-size:17px;margin:0 0 6px}
 .hero-card svg{width:120px;height:120px;overflow:visible}
 .hero-card .nm{font-size:22px;font-weight:700}
 .stat{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:14px;margin:6px 0}
+.upg{display:grid;gap:8px;margin-top:8px}
+.upr{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;align-items:center;border:1px solid var(--line);border-radius:12px;padding:10px 12px}
+.upr button{min-width:72px}
 .gear{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px}
 .gear span{border:1px solid var(--line);border-radius:999px;padding:3px 10px;font-size:13px;color:var(--muted)}
 .gear span.got{border-color:var(--gold);color:var(--gold);font-weight:500}
 .stars{color:var(--red);letter-spacing:2px;white-space:nowrap}.stars .e{color:var(--line)}
 .lessons{display:grid;gap:10px}
-.lesson{display:grid;grid-template-columns:64px 5.5em minmax(0,1fr) auto auto;gap:12px;align-items:center;border:1px solid var(--line);border-radius:12px;padding:10px 14px}
+.lesson{display:grid;grid-template-columns:64px 5.5em minmax(0,1fr) auto auto auto;gap:12px;align-items:center;border:1px solid var(--line);border-radius:12px;padding:10px 14px}
 .lesson .chars{font-size:20px;letter-spacing:2px;overflow-wrap:anywhere}
 .lesson .mini svg{width:56px;height:56px}
 .act{display:flex;flex-direction:column;align-items:center;gap:2px;min-width:92px}
 .act button{width:100%;padding:6px 10px}
-@media(max-width:640px){.lesson{grid-template-columns:56px minmax(0,1fr) minmax(0,1fr)}.lesson .chars{grid-column:1/-1}.lesson .mini{grid-row:span 1}}
+@media(max-width:640px){.lesson{grid-template-columns:repeat(3,minmax(0,1fr));gap:8px 10px}.lesson .mini{grid-column:1}.lesson>strong{grid-column:2/-1}.lesson .chars{grid-column:1/-1}.lesson>span:empty{display:none}.lesson>span:not(.chars):not(.mini){grid-column:1/-1}.act{min-width:0}}
 .topbar{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
 .topbar .meter{flex:1;min-width:120px}
 .stage{max-width:780px;margin:0 auto}
@@ -85,6 +88,7 @@ background:linear-gradient(transparent 72%,light-dark(#d9e4ee,#1e2a36) 72%),line
 .fighter svg{width:100%;height:100%;overflow:visible}
 .tag{font-size:14px;font-weight:500;text-align:center}
 .hearts{color:var(--red);font-size:17px;letter-spacing:2px;min-height:22px}.hearts .e{color:var(--line)}
+.hhp i{background:var(--ok)!important}
 .hp{width:min(140px,30vw);height:10px;border-radius:99px;background:var(--bg);border:1px solid var(--line);overflow:hidden}.hp i{display:block;height:100%;background:var(--red);transition:width .4s}
 .vs{font-size:13px;color:var(--gold);font-weight:900;align-self:center;text-align:center;min-width:3.5em}
 .bmsg{position:absolute;left:8px;right:8px;top:8px;text-align:center;font-weight:700;font-size:15px}
@@ -151,6 +155,14 @@ td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}
 .set input{width:20px;height:20px}
 .banner{background:var(--badbg);padding:10px 16px;font-size:14px}
 .say{min-height:40px;padding:4px 12px;font-size:14px}
+.fcard{display:block;perspective:1000px;width:min(320px,84vw);aspect-ratio:3/4;margin:16px auto 10px;padding:0;border:0;background:none;min-height:0}
+.fcard .in{position:relative;display:block;width:100%;height:100%;transition:transform .5s;transform-style:preserve-3d}
+.fcard.flip .in{transform:rotateY(180deg)}
+.face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;border:2px solid var(--red);border-radius:18px;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:18px;text-align:center;box-shadow:0 6px 18px rgba(0,0,0,.08)}
+.face.back{transform:rotateY(180deg)}
+.fbig{font-size:clamp(110px,30vw,150px);line-height:1;width:1.25em;height:1.25em;display:grid;place-items:center;border:1px dashed var(--grid);background:linear-gradient(var(--grid),var(--grid)) center/100% 1px no-repeat,linear-gradient(var(--grid),var(--grid)) center/1px 100% no-repeat}
+.ftag{font-size:13px;border-radius:999px;padding:3px 10px;background:var(--red);color:#fff}.ftag.soft{background:var(--soft);color:var(--muted)}
+.fpy{font-size:30px;color:var(--red);font-weight:500}.fword{font-size:26px}
 .toast{position:fixed;left:50%;bottom:16px;transform:translateX(-50%);z-index:9;width:min(92vw,460px);background:var(--ink);color:var(--bg);border-radius:14px;padding:14px 16px;font-size:15px;line-height:1.6;box-shadow:0 8px 24px rgba(0,0,0,.25)}
 .toast button{display:block;margin-top:8px;background:var(--bg);color:var(--ink);border:0;min-height:40px}
 .topic{display:inline-block;background:var(--soft);border-radius:999px;padding:4px 12px;font-size:14px;color:var(--muted)}
@@ -162,6 +174,15 @@ td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}
 .fc{font-size:30px;min-height:56px;min-width:46px;padding:2px 6px;border-color:transparent;background:transparent}
 .fc:hover:not(:disabled){background:var(--soft)}.fc.ok{background:var(--okbg);border-color:var(--ok)}.fc.bad{background:var(--badbg);border-color:var(--red)}
 .gopt{font-size:24px;min-height:64px}
+.mgrid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:10px clamp(16px,6vw,56px);max-width:560px;margin-top:10px}
+.mcol{display:grid;gap:10px;align-content:start}
+.mw{font-size:22px;min-height:54px;border-width:2px;border-radius:12px}
+.mw:disabled{opacity:1;cursor:default}
+.mw.sel{border-color:var(--ink);box-shadow:0 0 0 3px var(--soft)}
+.mw.c0{border-color:#3b82c4;background:light-dark(#e6f0fa,#1b2b3d)}.mw.c1{border-color:#c8821a;background:light-dark(#fcf0dc,#3a2c16)}
+.mw.c2{border-color:#7a5cc4;background:light-dark(#efe9fa,#2a2340)}.mw.c3{border-color:#2b8a7a;background:light-dark(#e2f4f0,#16302b)}
+.mw.c4{border-color:#b84a8a;background:light-dark(#fae6f1,#3a1c2d)}
+.mw.ok{outline:3px solid var(--ok);outline-offset:1px}.mw.bad{outline:3px dashed var(--red);outline-offset:1px}
 @media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
 </style>
 </head>
@@ -205,14 +226,14 @@ for(const C of Object.values(CONTENT)){C.fill=C.fill.map(([l,q,a,o,en])=>({l,q,a
 const MON_NAMES=['糊涂虫','乱笔怪','忘字妖','墨点精','歪歪兽','偷字鼠','瞌睡怪','倒写怪','迷路妖','吵闹精','马虎龟','多笔怪','少笔妖','拖拉熊','粗心猴','漏字鸟','发呆蛙','涂改怪','打嗝兽','喷墨鱼','黏黏怪','咕噜怪','啰嗦妖','捣蛋鬼','迷糊猫','翻页虫','乱叫鸡','慢吞吞','跳格怪','反字精'];
 const BOSS_NAMES=['大雾王','乌云王','迷宫王','黑墨王','狂风王','冰冻王','打雷王','沙尘王','暗影王','石头王','火焰王','海浪王'];
 const HEROES={mo:{name:'墨墨',desc:'一滴会写字的墨水'},zhi:{name:'纸纸',desc:'用作业纸折成的纸鹤'},shi:{name:'狮狮',desc:'爱打鼓的小醒狮'}};
-const GEAR=[['brush','神笔',6,'攻击 +4'],['shield','砚台盾',15,'多一颗心'],['gold','金墨',30,'答对 2 题就连击'],['cape','飞天披风',50,'每场挡住一次攻击']];
+const GEAR=[['brush','神笔',6,'攻击 +4'],['shield','砚台盾',15,'多一条命'],['gold','金墨',30,'答对 2 题就连击'],['cape','飞天披风',50,'每场挡住一次攻击']];
 const BADGES=[['first','第一颗星'],['streak3','连续学习三天'],['lv1A','一上完成'],['clear','清空复习本'],['boss','打败第一个大王']];
 
 /* ================= state ================= */
 const KEY='ez-cl-v1';let canStore=true;
-const blank=()=>({v:1,name:'',stars:{},best:{},review:{},streak:{last:'',n:0},badges:[],log:[],hadReview:0,hero:{type:'',xp:0,won:[]},set:{py:true,en:false,battle:true}});
+const blank=()=>({v:1,name:'',stars:{},best:{},review:{},streak:{last:'',n:0},badges:[],log:[],hadReview:0,hero:{type:'',xp:0,won:[],up:{atk:0,hp:0,life:0}},set:{py:true,en:false,battle:true}});
 let S;
-try{const o=JSON.parse(localStorage.getItem(KEY))||{};S={...blank(),...o};S.hero={...blank().hero,...(o.hero||{})};S.set={...blank().set,...(o.set||{})}}catch(e){canStore=false;S=blank()}
+try{const o=JSON.parse(localStorage.getItem(KEY))||{};S={...blank(),...o};S.hero={...blank().hero,...(o.hero||{})};S.hero.up={atk:0,hp:0,life:0,...((o.hero||{}).up||{})};S.set={...blank().set,...(o.set||{})}}catch(e){canStore=false;S=blank()}
 const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){canStore=false;showWarn()}};
 const showWarn=()=>{document.getElementById('warn').innerHTML=canStore?'':'<div class="banner">这个浏览器不能自动保存进度。做完练习后，请到“我的进度”复制进度码。</div>'};
 showWarn();
@@ -239,14 +260,14 @@ let voices=[];const loadV=()=>{try{voices=speechSynthesis.getVoices()||[]}catch(
 if(canSpeak){loadV();try{speechSynthesis.addEventListener('voiceschanged',loadV)}catch(e){}}
 function pickVoice(){const z=voices.filter(v=>/^zh/i.test(v.lang)&&!/HK|yue|TW/i.test(v.lang));return z.find(v=>/zh[-_]CN/i.test(v.lang))||z[0]||null}
 let heard=false,tipShown=false;
-function soundTip(){if(heard||tipShown)return;tipShown=true;const d=document.createElement('div');d.className='toast';d.setAttribute('role','status');
-  d.innerHTML='听不到声音吗？<br>iPhone / iPad：把侧边的静音开关拨回响铃，再调高音量。<br>如果还是没有声音，请到“设置 › 辅助功能 › 朗读内容 › 声音”下载“中文（中国大陆）”的声音。<button type="button">知道了</button>';
+function soundTip(force){if(!force&&(heard||tipShown))return;tipShown=true;document.querySelectorAll('.toast').forEach(x=>x.remove());const d=document.createElement('div');d.className='toast';d.setAttribute('role','status');
+  d.innerHTML=(canSpeak?'':'这个浏览器不能朗读。请用 Safari 或 Chrome 打开这个网站（不要在 WhatsApp、Telegram 等应用里直接打开）。<br>')+'听不到声音吗？<br>iPhone / iPad：把侧边的静音开关拨回响铃，再调高音量。<br>如果还是没有声音，请到“设置 › 辅助功能 › 朗读内容 › 声音”下载“中文（中国大陆）”的声音。<button type="button">知道了</button>';
   d.querySelector('button').onclick=()=>d.remove();document.body.appendChild(d);setTimeout(()=>d.remove(),15000)}
-function say(t){if(!canSpeak)return;try{loadV();
+function say(t){if(!canSpeak){soundTip(true);return}try{loadV();
   const go=()=>{const u=new SpeechSynthesisUtterance(t);u.lang='zh-CN';const v=pickVoice();if(v)u.voice=v;u.rate=.8;u.onstart=()=>{heard=true};u.onerror=()=>soundTip();speechSynthesis.speak(u);setTimeout(()=>{if(!heard)soundTip()},2500)};
   if(speechSynthesis.speaking||speechSynthesis.pending){speechSynthesis.cancel();setTimeout(go,150)}else go();
   if(speechSynthesis.paused)speechSynthesis.resume()}catch(e){soundTip()}}
-const sayBtn=(t,l='听一听')=>canSpeak?`<button class="say" type="button" data-say="${esc(t)}">${l}</button>`:'';
+const sayBtn=(t,l='听一听')=>`<button class="say" type="button" data-say="${esc(t)}">${l}</button>`;
 app.addEventListener('click',e=>{const b=e.target.closest('[data-say]');if(b)say(b.dataset.say)});
 function bump(el,cls){if(!el)return;el.classList.remove(cls);void el.offsetWidth;el.classList.add(cls)}
 
@@ -292,6 +313,7 @@ function monsterSVG(seed,hue,boss){
 }
 const monFor=(lv,i)=>({name:MON_NAMES[(lvIdx(lv)*7+i)%MON_NAMES.length],svg:monsterSVG(i+1+lvIdx(lv)*11,(lvIdx(lv)*36+i*29)%360,false)});
 const gramMon=lv=>({name:['语法怪','病句妖','乱序兽','标点精'][lvIdx(lv)%4],svg:monsterSVG(80+lvIdx(lv)*5,(lvIdx(lv)*36+120)%360,false)});
+const collMon=lv=>({name:['搭配怪','配对妖','错配兽','连线精'][lvIdx(lv)%4],svg:monsterSVG(140+lvIdx(lv)*3,(lvIdx(lv)*36+60)%360,false)});
 const bossFor=(lv,i)=>({name:BOSS_NAMES[(lvIdx(lv)*2+i)%BOSS_NAMES.length],svg:monsterSVG(i+5+lvIdx(lv)*7,(lvIdx(lv)*36+200+i*40)%360,true)});
 
 /* ================= hero stats ================= */
@@ -299,14 +321,18 @@ const totalStars=()=>Object.values(S.stars).reduce((a,b)=>a+b,0);
 const gearOwned=()=>GEAR.filter(g=>totalStars()>=g[2]).map(g=>g[0]);
 const xpFor=n=>40*n*(n-1);
 const heroLv=()=>{let n=1;while(xpFor(n+1)<=S.hero.xp)n++;return n};
-const heroAtk=()=>10+2*(heroLv()-1)+(gearOwned().includes('brush')?4:0);
-const heroHearts=()=>3+(gearOwned().includes('shield')?1:0);
+const UPG=[['atk','攻击','每次答对，打怪物更痛',3,10],['hp','体力','每条命能挨更多下攻击',10,10],['life','生命','多一条命，更不容易累倒',1,3]];
+const upSpent=()=>S.hero.up.atk+S.hero.up.hp+S.hero.up.life;
+const upPoints=()=>Math.max(0,heroLv()-1-upSpent());
+const heroAtk=()=>10+3*S.hero.up.atk+(gearOwned().includes('brush')?4:0);
+const heroHP=()=>20+10*S.hero.up.hp;
+const heroHearts=()=>2+S.hero.up.life+(gearOwned().includes('shield')?1:0);
 const comboAt=()=>gearOwned().includes('gold')?2:3;
 
 /* ================= progress ================= */
-function actList(lv){const C=CONTENT[lv],a=[];C.lessons.forEach((l,i)=>{a.push({id:`${lv}|${i}|r`,kind:'r',lv,i,label:`${l.n} · 认读`});a.push({id:`${lv}|${i}|w`,kind:'w',lv,i,label:`${l.n} · 写字`})});if(C.grammar&&C.grammar.length)a.push({id:`${lv}|g`,kind:'g',lv,i:0,label:'语文应用'});C.passages.forEach((p,i)=>a.push({id:`${lv}|p${i}`,kind:'p',lv,i,label:`阅读：${p.title}`}));return a}
+function actList(lv){const C=CONTENT[lv],a=[];C.lessons.forEach((l,i)=>{a.push({id:`${lv}|${i}|r`,kind:'r',lv,i,label:`${l.n} · 认读`});a.push({id:`${lv}|${i}|w`,kind:'w',lv,i,label:`${l.n} · 写字`})});if(C.grammar&&C.grammar.length)a.push({id:`${lv}|g`,kind:'g',lv,i:0,label:'语文应用'});if(C.colloc&&C.colloc.length)a.push({id:`${lv}|c`,kind:'c',lv,i:0,label:'词语搭配'});C.passages.forEach((p,i)=>a.push({id:`${lv}|p${i}`,kind:'p',lv,i,label:`阅读：${p.title}`}));return a}
 function levelPct(lv){if(!CONTENT[lv])return 0;const a=actList(lv);return a.reduce((s,x)=>s+(S.stars[x.id]||0),0)/(a.length*3)}
-function skillStats(){const r={r:[0,0,0],w:[0,0,0],p:[0,0,0],g:[0,0,0]};for(const lv in CONTENT)for(const x of actList(lv)){const t=r[x.kind];t[1]++;if(x.id in S.best){t[0]+=S.best[x.id];t[2]++}}return r}
+function skillStats(){const r={r:[0,0,0],w:[0,0,0],p:[0,0,0],g:[0,0,0]};for(const lv in CONTENT)for(const x of actList(lv)){const t=r[x.kind==='c'?'g':x.kind];t[1]++;if(x.id in S.best){t[0]+=S.best[x.id];t[2]++}}return r}
 let newBadge=null;
 function record(id,pct){
   S.best[id]=Math.max(S.best[id]||0,pct);
@@ -328,7 +354,7 @@ function missed(c,lv,k){const o=S.review[c];S.review[c]={lv,k:o&&o.k==='w'?'w':k
 function hit(c){const r=S.review[c];if(r){r.n++;if(r.n>=2)delete S.review[c]}}
 function chips(){
   $('#chipReview').textContent=`复习本 ${Object.keys(S.review).length}`;
-  $('#chipHero').textContent=S.hero.type?`${HEROES[S.hero.type].name} Lv${heroLv()}`:'我的英雄';
+  $('#chipHero').textContent=S.hero.type?`${HEROES[S.hero.type].name} Lv${heroLv()}${upPoints()?' · 可升级':''}`:'我的英雄';
   const st=S.streak.last===today()||S.streak.last===yesterday()?S.streak.n:0;
   $('#hello').textContent=(S.name?`${S.name}，欢迎回来`:'小一至小六')+(st?` · 连续学习 ${st} 天`:' · 认读、写字、阅读');
 }
@@ -341,7 +367,7 @@ function nextStep(){
   if(rv>=6)return{t:`复习本里有 ${rv} 个字`,d:'先把不熟的字练熟，再往前走。',btn:'开始复习',go:startReview};
   const last=[...S.log].reverse().find(l=>l.a.includes('|'));const start=last?lvIdx(last.a.split('|')[0]):0;
   for(const L of LEVELS.slice(start)){if(!CONTENT[L.id])continue;
-    for(const x of actList(L.id)){const s=S.stars[x.id];if((s||0)<2)return{lv:L.id,t:`${L.name} · ${x.label}`,d:s===undefined?(x.kind==='p'?`大王“${bossFor(x.lv,x.i).name}”在等你。`:x.kind==='g'?`“${gramMon(x.lv).name}”在语文应用里等你。`:`怪物“${monFor(x.lv,x.i).name}”在这一课。`):`上次 ${s} 颗星，再做一次争取两颗星以上。`,btn:'出发',go:()=>startAct(x)}}}
+    for(const x of actList(L.id)){const s=S.stars[x.id];if((s||0)<2)return{lv:L.id,t:`${L.name} · ${x.label}`,d:s===undefined?(x.kind==='p'?`大王“${bossFor(x.lv,x.i).name}”在等你。`:x.kind==='g'?`“${gramMon(x.lv).name}”在语文应用里等你。`:x.kind==='c'?`“${collMon(x.lv).name}”在词语搭配里等你。`:`怪物“${monFor(x.lv,x.i).name}”在这一课。`):`上次 ${s} 颗星，再做一次争取两颗星以上。`,btn:'出发',go:()=>startAct(x)}}}
   if(rv)return{t:`复习本里有 ${rv} 个字`,d:'把剩下的字复习完吧。',btn:'开始复习',go:startReview};
   return{t:'已开放的级别都拿到两颗星以上',d:'下一级制作中。你可以回去争取三颗星。',btn:null};
 }
@@ -378,7 +404,8 @@ function heroCard(full){
   const lv=heroLv(),xp=S.hero.xp,a=xpFor(lv),b=xpFor(lv+1),g=gearOwned(),ts=totalStars();
   return `<div class="hero-card">${heroSVG(S.hero.type,g)}<div><div class="nm">${HEROES[S.hero.type].name} <span class="muted" style="font-size:16px">Lv ${lv}</span></div>
    <div class="meter xp" title="经验值"><i style="width:${Math.round((xp-a)/(b-a)*100)}%"></i></div><div class="note">经验 ${xp-a} / ${b-a}，升到 Lv ${lv+1}</div>
-   <div class="stat"><span>攻击 ${heroAtk()}</span><span>生命 ${'♥'.repeat(heroHearts())}</span><span>打败怪物 ${S.hero.won.length}</span></div></div></div>
+   <div class="stat"><span>攻击 ${heroAtk()}</span><span>体力 ${heroHP()}</span><span>生命 ${'♥'.repeat(heroHearts())}</span><span>打败怪物 ${S.hero.won.length}</span></div>
+   ${!full&&upPoints()?`<button class="pri" id="upGo" style="margin-top:6px">有 ${upPoints()} 个升级点，去升级</button>`:''}</div></div>
    <div class="gear">${GEAR.map(([k,n,need,d])=>`<span class="${g.includes(k)?'got':''}" title="${d}">${g.includes(k)?n+' · '+d:`${n} · ★${need} 解锁`}</span>`).join('')}</div>
    ${full?'':`<p class="note" style="margin:10px 0 0">你有 ${ts} 颗星。星星越多，装备越强。</p>`}`;
 }
@@ -401,6 +428,7 @@ function viewHome(){
    </aside></div>`;
   app.querySelectorAll('[data-lv]').forEach(b=>b.onclick=()=>go('level-'+b.dataset.lv.toLowerCase()));
   if(nx.btn)$('#nxBtn').onclick=nx.go;
+  const ug=$('#upGo');if(ug)ug.onclick=()=>go('hero');
 }
 
 function viewLevel(lv){
@@ -409,22 +437,58 @@ function viewLevel(lv){
   app.innerHTML=`<div class="row" style="justify-content:space-between;margin-bottom:10px"><h2 style="margin:0" class="kai">${lvName(lv)}</h2><button class="ghost" id="back">← 返回级别</button></div>
    <p class="muted" style="margin-top:0">认读：看拼音或句子选字。写字：在田字格里按笔顺写字。拿到两颗星以上就算掌握。${bt?'每一课有一只怪物，每篇阅读有一个大王。':''}</p>
    <div class="lessons">${C.lessons.map((l,i)=>`<div class="lesson">${mini(`${lv}|${i}`,monFor(lv,i))}<strong>${l.n}</strong><span class="chars kai">${l.read}</span>
-     ${['r','w'].map(k=>{const id=`${lv}|${i}|${k}`,s=S.stars[id];return `<div class="act">${s===undefined?'<span class="note">未做</span>':starHtml(s)}<button data-a="${id}">${k==='r'?'认读':'写字'}</button></div>`}).join('')}</div>`).join('')}</div>
-   ${C.grammar&&C.grammar.length?`<h2 style="margin-top:28px">语文应用</h2>
-   <div class="lessons"><div class="lesson">${mini(`${lv}|g`,gramMon(lv))}<strong>语法练习</strong><span>${[...new Set(C.grammar.map(g=>g.topic))].join('、')}<span class="note">（${C.grammar.length} 题）</span></span><span></span><div class="act">${S.stars[`${lv}|g`]===undefined?'<span class="note">未做</span>':starHtml(S.stars[`${lv}|g`])}<button data-a="${lv}|g">开始</button></div></div></div>`:''}
+     <div class="act"><span class="note">不计分</span><button data-cards="${i}">生字卡</button></div>${['r','w'].map(k=>{const id=`${lv}|${i}|${k}`,s=S.stars[id];return `<div class="act">${s===undefined?'<span class="note">未做</span>':starHtml(s)}<button data-a="${id}">${k==='r'?'认读':'写字'}</button></div>`}).join('')}</div>`).join('')}</div>
+   ${(C.grammar&&C.grammar.length)||(C.colloc&&C.colloc.length)?`<h2 style="margin-top:28px">语文应用</h2><div class="lessons">
+   ${C.colloc&&C.colloc.length?`<div class="lesson">${mini(`${lv}|c`,collMon(lv))}<strong>词语搭配</strong><span>词语配对、选词搭配<span class="note">（${C.colloc.length} 题）</span></span><span></span><span></span><div class="act">${S.stars[`${lv}|c`]===undefined?'<span class="note">未做</span>':starHtml(S.stars[`${lv}|c`])}<button data-a="${lv}|c">开始</button></div></div>`:''}
+   ${C.grammar&&C.grammar.length?`<div class="lesson">${mini(`${lv}|g`,gramMon(lv))}<strong>语法练习</strong><span>${[...new Set(C.grammar.map(g=>g.topic))].join('、')}<span class="note">（${C.grammar.length} 题）</span></span><span></span><span></span><div class="act">${S.stars[`${lv}|g`]===undefined?'<span class="note">未做</span>':starHtml(S.stars[`${lv}|g`])}<button data-a="${lv}|g">开始</button></div></div>`:''}</div>`:''}
    <h2 style="margin-top:28px">阅读理解</h2>
-   <div class="lessons">${C.passages.map((p,i)=>{const id=`${lv}|p${i}`,s=S.stars[id];return `<div class="lesson">${mini(`${lv}|p${i}`,bossFor(lv,i))}<strong>阅读 ${i+1}</strong><span>《${p.title}》<span class="note">（${p.covers}）</span></span><span></span><div class="act">${s===undefined?'<span class="note">未做</span>':starHtml(s)}<button data-a="${id}">开始</button></div></div>`}).join('')}</div>
+   <div class="lessons">${C.passages.map((p,i)=>{const id=`${lv}|p${i}`,s=S.stars[id];return `<div class="lesson">${mini(`${lv}|p${i}`,bossFor(lv,i))}<strong>阅读 ${i+1}</strong><span>《${p.title}》<span class="note">（${p.covers}）</span></span><span></span><span></span><div class="act">${s===undefined?'<span class="note">未做</span>':starHtml(s)}<button data-a="${id}">开始</button></div></div>`}).join('')}</div>
    <p class="note" style="margin-top:16px">阅读文中的人物都是虚构的。</p>`;
   $('#back').onclick=()=>go('home');
   app.querySelectorAll('[data-a]').forEach(b=>b.onclick=()=>startAct(actList(lv).find(x=>x.id===b.dataset.a)));
+  app.querySelectorAll('[data-cards]').forEach(b=>b.onclick=()=>viewCards(lv,+b.dataset.cards));
+}
+
+function viewCards(lv,li){
+  leaveHash();stopWriter();
+  const L=CONTENT[lv].lessons[li];const all=[...new Set([...L.read,...L.write])];const W=new Set(L.write);
+  let only=false,list=all.slice(),k=0,flip=false;
+  const ctxWord=c=>{const x=EZ.ctx[c];return x?x.replace('＿',c):''};
+  function draw(){
+    if(k>=list.length)k=list.length-1;if(k<0)k=0;const c=list[k];const w=ctxWord(c);
+    app.innerHTML=`<div class="stage"><div class="topbar"><button class="ghost" id="back">← 返回</button><span class="meter"><i style="width:${(k+1)/list.length*100}%"></i></span><span class="note">${k+1} / ${list.length}</span></div>
+     <h2 style="margin:12px 0 4px">${lvName(lv)} ${L.n} · 生字卡</h2><p class="note" style="margin:0">先认识这一课的字，再去做认读和写字。生字卡不计分。</p>
+     <button class="fcard ${flip?'flip':''}" id="card" aria-label="点一下翻面"><span class="in">
+      <span class="face front"><span class="fbig kai">${c}</span>${W.has(c)?'<span class="ftag">要会写</span>':'<span class="ftag soft">要会认</span>'}<span class="note">点一下，看拼音和意思</span></span>
+      <span class="face back"><span class="kai" style="font-size:56px;line-height:1">${c}</span><span class="fpy">${esc(py(c))}</span><span>${esc(en(c))}</span>${w?`<span class="kai fword">${esc(w)}</span>`:''}</span>
+     </span></button>
+     <div class="row" style="justify-content:center">${sayBtn(c,'听这个字')}${w?sayBtn(w,'听词语'):''}</div>
+     <div class="row" style="justify-content:center;margin-top:12px"><button id="prev" ${k===0?'disabled':''}>← 上一张</button><button id="flipB">翻面</button><button class="pri" id="next">${k===list.length-1?'完成':'下一张 →'}</button></div>
+     <div class="row set" style="justify-content:center;margin-top:10px"><label><input type="checkbox" id="only" ${only?'checked':''}> 只看要会写的字（${W.size}）</label><button class="ghost" id="mix">打乱顺序</button></div></div>`;
+    const back=()=>{document.removeEventListener('keydown',key);go('level-'+lv.toLowerCase())};
+    $('#back').onclick=back;
+    $('#card').onclick=$('#flipB').onclick=()=>{flip=!flip;$('#card').classList.toggle('flip',flip);if(flip)say(c)};
+    $('#prev').onclick=()=>{k--;flip=false;draw()};
+    $('#next').onclick=()=>{if(k===list.length-1)return back();k++;flip=false;draw()};
+    $('#only').onchange=e=>{only=e.target.checked;list=only?all.filter(x=>W.has(x)):all.slice();k=0;flip=false;draw()};
+    $('#mix').onclick=()=>{list=shuffle(list);k=0;flip=false;draw()};
+  }
+  function key(e){if(!$('#card')){document.removeEventListener('keydown',key);return}
+    if(e.key==='ArrowRight'&&k<list.length-1){k++;flip=false;draw()}else if(e.key==='ArrowLeft'&&k>0){k--;flip=false;draw()}else if(e.key===' '&&e.target===document.body){e.preventDefault();$('#card').click()}}
+  document.addEventListener('keydown',key);draw();
 }
 
 function viewHero(){
-  const all=[];for(const L of LEVELS){if(!CONTENT[L.id])continue;CONTENT[L.id].lessons.forEach((l,i)=>all.push([`${L.id}|${i}`,monFor(L.id,i),`${L.name} ${l.n}`]));if(CONTENT[L.id].grammar&&CONTENT[L.id].grammar.length)all.push([`${L.id}|g`,gramMon(L.id),`${L.name} 语文应用`]);CONTENT[L.id].passages.forEach((p,i)=>all.push([`${L.id}|p${i}`,bossFor(L.id,i),`${L.name} 阅读${i+1}`]))}
+  const all=[];for(const L of LEVELS){if(!CONTENT[L.id])continue;CONTENT[L.id].lessons.forEach((l,i)=>all.push([`${L.id}|${i}`,monFor(L.id,i),`${L.name} ${l.n}`]));if(CONTENT[L.id].colloc&&CONTENT[L.id].colloc.length)all.push([`${L.id}|c`,collMon(L.id),`${L.name} 词语搭配`]);if(CONTENT[L.id].grammar&&CONTENT[L.id].grammar.length)all.push([`${L.id}|g`,gramMon(L.id),`${L.name} 语法练习`]);CONTENT[L.id].passages.forEach((p,i)=>all.push([`${L.id}|p${i}`,bossFor(L.id,i),`${L.name} 阅读${i+1}`]))}
   app.innerHTML=`<div class="row" style="justify-content:space-between"><h2 style="margin:0">我的英雄</h2><button class="ghost" id="back">← 返回</button></div>
    <div class="home" style="margin-top:14px"><div class="card">${heroCard(true)}
+     <h3 style="margin-top:18px">升级 <span class="muted" style="font-size:15px;font-weight:400">升级点：<b id="upn">${upPoints()}</b></span></h3>
+     <div class="upg">${UPG.map(([k,n,d,step,cap])=>{const cur=k==='atk'?heroAtk():k==='hp'?heroHP():heroHearts();const unit=k==='life'?' 条命':'';const full=S.hero.up[k]>=cap;
+       return `<div class="upr"><div><b>${n}</b> <span class="muted">${cur}${unit}${full?'（已满）':` → ${cur+step}${unit}`}</span><div class="note">${d}</div></div><button class="pri" data-up="${k}" ${!upPoints()||full?'disabled':''}>+${step}</button></div>`}).join('')}</div>
+     <div class="row" style="margin-top:8px"><button class="ghost" id="upReset" ${upSpent()?'':'disabled'}>重新分配升级点</button></div>
+     <p class="note" style="margin:4px 0 0">英雄每升一级，得到 1 个升级点。越高级的怪物，攻击力越强，记得升级体力或生命。</p>
      <h3 style="margin-top:18px">怎么变强？</h3>
-     <ul class="muted" style="margin:0;padding-left:20px"><li>答对一题得 10 点经验，打败怪物多得 25 点。经验够了就升级，攻击力变高。</li><li>星星越多，解锁的装备越多。</li><li>连续答对 ${comboAt()} 题就会“连击”，伤害多一半。</li><li>用了提示，攻击力减半。</li></ul></div>
+     <ul class="muted" style="margin:0;padding-left:20px"><li>答对一题得 10 点经验，打败怪物多得 25 点。经验够了就升一级。</li><li>答错了，怪物会攻击你，减少体力。体力用完就失去一条命，命都用完就会累倒。</li><li>星星越多，解锁的装备越多。</li><li>连续答对 ${comboAt()} 题就会“连击”，伤害多一半。</li><li>用了提示或只答对一部分，攻击力会减弱。</li></ul></div>
     <div class="card set"><h3>换英雄</h3><div class="heroes">${Object.entries(HEROES).map(([k,h])=>`<button type="button" data-h="${k}" aria-pressed="${k===S.hero.type}">${heroSVG(k,[])}<b>${h.name}</b></button>`).join('')}</div>
      <h3 style="margin-top:18px">战斗模式</h3><label><input type="checkbox" id="bt" ${S.set.battle?'checked':''}> 做练习时显示英雄和怪物</label><p class="note" style="margin:0">关掉后，练习和计分完全一样，只是不显示战斗。</p></div></div>
    <h2 style="margin-top:28px">怪物图鉴 <span class="muted" style="font-size:16px">${S.hero.won.length} / ${all.length}</span></h2>
@@ -432,6 +496,8 @@ function viewHero(){
   $('#back').onclick=()=>go('home');
   app.querySelectorAll('[data-h]').forEach(b=>b.onclick=()=>{S.hero.type=b.dataset.h;save();chips();viewHero()});
   $('#bt').onchange=e=>{S.set.battle=e.target.checked;save()};
+  app.querySelectorAll('[data-up]').forEach(b=>b.onclick=()=>{const k=b.dataset.up,cap=UPG.find(u=>u[0]===k)[4];if(upPoints()&&S.hero.up[k]<cap){S.hero.up[k]++;save();chips();const y=window.scrollY;viewHero();window.scrollTo(0,y)}});
+  $('#upReset').onclick=()=>{S.hero.up={atk:0,hp:0,life:0};save();chips();const y=window.scrollY;viewHero();window.scrollTo(0,y)};
 }
 
 function viewProgress(){
@@ -441,7 +507,7 @@ function viewProgress(){
   app.innerHTML=`<div class="row" style="justify-content:space-between"><h2 style="margin:0">${esc(S.name||'我')}的进度</h2><button class="ghost" id="back">← 返回</button></div>
    ${weak?`<p>最需要加强的是 <strong>${weak}</strong>。</p>`:'<p class="muted">多做几个练习，这里会告诉你哪一方面最需要加强。</p>'}
    <div class="scroll"><table><thead><tr><th>级别</th><th class="num">认读</th><th class="num">写字</th><th class="num">阅读</th><th class="num">语文应用</th><th class="num">星星</th></tr></thead><tbody>
-   ${LEVELS.filter(L=>CONTENT[L.id]).map(L=>{const a=actList(L.id);const f=k=>{const xs=a.filter(x=>x.kind===k&&x.id in S.best);return xs.length?Math.round(xs.reduce((s,x)=>s+S.best[x.id],0)/xs.length*100)+'%':'—'};const got=a.reduce((s,x)=>s+(S.stars[x.id]||0),0);
+   ${LEVELS.filter(L=>CONTENT[L.id]).map(L=>{const a=actList(L.id);const f=k=>{const xs=a.filter(x=>(x.kind===k||(k==='g'&&x.kind==='c'))&&x.id in S.best);return xs.length?Math.round(xs.reduce((s,x)=>s+S.best[x.id],0)/xs.length*100)+'%':'—'};const got=a.reduce((s,x)=>s+(S.stars[x.id]||0),0);
      return `<tr><td class="kai">${L.name}</td><td class="num">${f('r')}</td><td class="num">${f('w')}</td><td class="num">${f('p')}</td><td class="num">${f('g')}</td><td class="num">${got} / ${a.length*3}</td></tr>`}).join('')}
    </tbody></table></div>
    <h2 style="margin-top:28px">复习本</h2>
@@ -466,7 +532,7 @@ function viewProgress(){
   let armed=false;
   $('#rs').onclick=()=>{const d=readCode($('#code').value);if(!d){$('#rsm').textContent='进度码不正确，请再检查。';return}
     if(!armed){armed=true;$('#rsm').textContent=`这是“${d.name||'无名'}”的进度，会换掉现在的进度。再按一次确定。`;return}
-    S={...blank(),...d,hero:{...blank().hero,...(d.hero||{})},set:{...blank().set,...(d.set||{})}};save();chips();render()};
+    S={...blank(),...d,hero:{...blank().hero,...(d.hero||{}),up:{atk:0,hp:0,life:0,...((d.hero||{}).up||{})}},set:{...blank().set,...(d.set||{})}};save();chips();render()};
   $('#nmb').onclick=()=>{const v=$('#nm2').value.trim();if(v){S.name=v;save();chips();render()}};
 }
 function makeCode(){const d={...S,log:S.log.slice(-80)};return 'EZ1-'+btoa(unescape(encodeURIComponent(JSON.stringify(d))))}
@@ -476,17 +542,19 @@ function readCode(c){try{c=c.trim();if(!c.startsWith('EZ1-'))return null;const d
 function makeBattle(mon,monId,totalItems,boss){
   if(!S.set.battle||!S.hero.type)return null;
   const lvk=monId?lvIdx(monId.split('|')[0]):0;const max=Math.max(20,Math.round(totalItems*10*(.8+.04*lvk)));
-  return {mon,monId,boss,max,hp:max,hearts:heroHearts(),maxH:heroHearts(),combo:0,dodge:gearOwned().includes('cape'),xp:0,won:false,ko:false};
+  const hit=8+lvk+(boss?3:0);
+  return {mon,monId,boss,max,hp:max,hearts:heroHearts(),maxH:heroHearts(),hhp:heroHP(),hmax:heroHP(),hit,combo:0,dodge:gearOwned().includes('cape'),xp:0,won:false,ko:false};
 }
 function arenaHTML(B){
   return `<div class="arena" id="arena"><div class="bmsg" id="bmsg" aria-live="polite">${B.boss?'大王出现了！':'怪物出现了！'}</div>
-   <div class="fighter" id="fh"><div class="body">${heroSVG(S.hero.type,gearOwned())}</div><div class="tag">${HEROES[S.hero.type].name} Lv${heroLv()}</div><div class="hearts" id="hearts"></div></div>
+   <div class="fighter" id="fh"><div class="body">${heroSVG(S.hero.type,gearOwned())}</div><div class="tag">${HEROES[S.hero.type].name} Lv${heroLv()}</div><div class="hp hhp"><i id="hhpbar" style="width:100%"></i></div><div class="hearts" id="hearts" aria-label="生命"></div></div>
    <div class="vs" id="combo">VS</div>
-   <div class="fighter" id="fm"><div class="body">${B.mon.svg}</div><div class="tag">${B.mon.name}</div><div class="hp"><i id="hpbar" style="width:100%"></i></div></div></div>`;
+   <div class="fighter" id="fm"><div class="body">${B.mon.svg}</div><div class="tag">${B.mon.name}</div><div class="hp"><i id="hpbar" style="width:100%"></i></div><div class="note">攻击力 ${B.hit}</div></div></div>`;
 }
 function drawBattle(B){
   const h=$('#hearts');if(h)h.innerHTML='♥'.repeat(Math.max(0,B.hearts))+`<span class="e">${'♥'.repeat(B.maxH-Math.max(0,B.hearts))}</span>`;
   const hb=$('#hpbar');if(hb)hb.style.width=Math.max(0,B.hp/B.max*100)+'%';
+  const hh=$('#hhpbar');if(hh)hh.style.width=Math.max(0,B.hhp/B.hmax*100)+'%';
   const c=$('#combo');if(c)c.textContent=B.combo>=comboAt()?`连击 ×1.5`:'VS';
 }
 function floatDmg(side,txt,heal){const f=$(side);if(!f)return;const d=document.createElement('span');d.className='dmg'+(heal?' heal':'');d.textContent=txt;f.appendChild(d);setTimeout(()=>d.remove(),950)}
@@ -498,15 +566,16 @@ function battleTurn(B,val){
     const mult=B.combo>=comboAt()?1.5:1;const dmg=Math.round(heroAtk()*val*mult);
     if(B.won){if(msg)msg.textContent=`答对了！经验 +${Math.round(val*10)}`;drawBattle(B);return}
     B.hp-=dmg;bump($('#fh .body'),'atkR');setTimeout(()=>{bump($('#fm .body'),'shake');floatDmg('#fm','-'+dmg)},220);
-    if(msg)msg.textContent=val<1?`用了提示，攻击减半：-${dmg}`:mult>1?`连击！-${dmg}`:`攻击！-${dmg}`;
+    if(msg)msg.textContent=val<1?`答对了一部分，攻击减弱：-${dmg}`:mult>1?`连击！-${dmg}`:`攻击！-${dmg}`;
     if(B.hp<=0){B.won=true;setTimeout(()=>{$('#fm')?.classList.add('ko');if(msg)msg.textContent=`打败了${B.mon.name}！`},450)}
   }else{B.combo=0;
     if(B.won||B.ko){drawBattle(B);return}
     bump($('#fm .body'),'atkL');
     if(B.dodge){B.dodge=false;if(msg)msg.textContent='飞天披风挡住了攻击！';setTimeout(()=>floatDmg('#fh','挡住'),220)}
-    else{B.hearts--;setTimeout(()=>{bump($('#fh .body'),'shake');floatDmg('#fh','-♥')},220);
-      if(msg)msg.textContent=B.hearts>0?`${B.mon.name}反击了！小心。`:`${HEROES[S.hero.type].name}累倒了，先休息。继续答题还能拿星星和经验。`;
-      if(B.hearts<=0){B.ko=true;setTimeout(()=>$('#fh')?.classList.add('ko'),450)}}
+    else{B.hhp-=B.hit;const lost=B.hhp<=0;setTimeout(()=>{bump($('#fh .body'),'shake');floatDmg('#fh',lost?'-♥':'-'+B.hit)},220);
+      if(lost){B.hearts--;if(B.hearts>0)B.hhp=B.hmax}
+      if(msg)msg.textContent=!lost?`${B.mon.name}反击了！体力 -${B.hit}`:B.hearts>0?`体力用完，失去一条命！还剩 ${B.hearts} 条命。`:`${HEROES[S.hero.type].name}累倒了，先休息。继续答题还能拿星星和经验。`;
+      if(B.hearts<=0){B.hhp=0;B.ko=true;setTimeout(()=>$('#fh')?.classList.add('ko'),450)}}
   }
   setTimeout(()=>drawBattle(B),250);
 }
@@ -516,7 +585,7 @@ function endBattle(B,lvBefore,gearBefore){
   if(B.won&&B.monId&&!S.hero.won.includes(B.monId))S.hero.won.push(B.monId);
   checkBadges();save();chips();
   out+=B.won?`<div class="reward">打败了 <b>${B.mon.name}</b>！经验 +${B.xp+bonus}</div>`:`<div class="reward">${B.mon.name}逃走了。经验 +${B.xp}。下次再来！</div>`;
-  const lv=heroLv();const tg=$('#fh .tag');if(tg)tg.textContent=`${HEROES[S.hero.type].name} Lv${lv}`;if(lv>lvBefore)out+=`<div class="reward">${HEROES[S.hero.type].name} 升到 <b>Lv ${lv}</b>！攻击 ${heroAtk()}</div>`;
+  const lv=heroLv();const tg=$('#fh .tag');if(tg)tg.textContent=`${HEROES[S.hero.type].name} Lv${lv}`;if(lv>lvBefore)out+=`<div class="reward">${HEROES[S.hero.type].name} 升到 <b>Lv ${lv}</b>！获得 ${lv-lvBefore} 个升级点，到“我的英雄”选择升级。</div>`;
   gearOwned().filter(g=>!gearBefore.includes(g)).forEach(k=>{const g=GEAR.find(x=>x[0]===k);out+=`<div class="reward">新装备：<b>${g[1]}</b>（${g[3]}）</div>`});
   return out;
 }
@@ -539,6 +608,7 @@ function writeItems(lv,i){return [...new Set(CONTENT[lv].lessons[i].write)].map(
 
 function startAct(x){
   if(x.kind==='p')return startReading(x.lv,x.i);
+  if(x.kind==='c')return run({title:`${lvName(x.lv)} 词语搭配`,items:shuffle(CONTENT[x.lv].colloc).map(c=>({type:'g',g:{...c,topic:'词语搭配'},opts:c.t==='pick'?shuffle(c.o):null,R:c.t==='match'?shuffle(c.R):null})),id:x.id,back:'level-'+x.lv.toLowerCase(),mon:collMon(x.lv),monId:x.id});
   if(x.kind==='g')return run({title:`${lvName(x.lv)} 语文应用`,items:grammarItems(x.lv),id:x.id,back:'level-'+x.lv.toLowerCase(),mon:gramMon(x.lv),monId:x.id});
   const items=x.kind==='r'?readItems(x.lv,x.i):writeItems(x.lv,x.i);
   run({title:`${lvName(x.lv)} ${x.label}`,items,id:x.id,back:'level-'+x.lv.toLowerCase(),mon:monFor(x.lv,x.i),monId:`${x.lv}|${x.i}`});
@@ -586,19 +656,22 @@ function run(R){
   }
   function showGrammar(it){
     const g=it.g;const sent=t=>S.set.py?rubyLine(t):esc(t).replace(/＿/g,'<span class="blank">　</span>');
-    const good=g.t==='pick'?g.q.replace(/＿+/,g.o[g.a]):g.t==='order'?g.ans[0]:g.s.replace(g.bad,g.right);
+    const good=g.t==='pick'?g.q.replace(/＿+/,g.o[g.a]):g.t==='order'?g.ans[0]:g.t==='match'?g.L.map((l,i)=>l+g.R[i]).join('、'):g.s.replace(g.bad,g.right);
     let body='';
     if(g.t==='pick')body=`<div class="q kai">${sent(g.q)}</div><p class="muted" style="margin:0">选出最适合的答案。</p><div class="opts" style="margin-top:12px">${it.opts.map(o=>`<button class="opt gopt kai" data-o="${esc(o)}">${esc(o)}</button>`).join('')}</div>`;
     else if(g.t==='order')body=`<p class="muted">按正确的次序点一点，组成一个完整的句子。点错了可以再点一下拿回来。</p><div class="ans kai" id="ans"></div><div class="pool kai" id="pool">${it.parts.map((p,i)=>`<button class="chipw" data-i="${i}">${esc(p)}</button>`).join('')}</div><div class="row" style="margin-top:12px"><button id="chk" class="pri" disabled>检查</button></div>`;
+    else if(g.t==='match')body=`<p class="muted">把左边和右边能搭配的词语连起来：先点左边的词，再点右边的词。点错了，再点一下左边的词就能取消。</p>
+      <div class="mgrid kai"><div class="mcol">${g.L.map((w,i)=>`<button class="mw" data-l="${i}">${esc(w)}</button>`).join('')}</div><div class="mcol">${it.R.map((w,i)=>`<button class="mw" data-r="${i}">${esc(w)}</button>`).join('')}</div></div>
+      <div class="row" style="margin-top:12px"><button id="chk" class="pri" disabled>检查</button></div>`;
     else body=`<p class="muted">这个句子里有一个错别字。找出来，点一下。</p><div class="q kai fixs">${[...g.s].map((c,i)=>isHan(c)?`<button class="fc" data-i="${i}">${c}</button>`:`<span>${esc(c)}</span>`).join('')}</div>`;
     frame(`<div style="margin-top:12px"><span class="topic">${esc(g.topic)}</span></div>${body}
-      <div class="row" style="margin-top:12px"><button id="hintB" class="say">英文提示</button></div><div id="hintT"></div>
+      <div class="row" style="margin-top:12px">${g.t==='pick'?sayBtn(g.q.replace(/＿+/g,'，'),'听句子'):''}<button id="hintB" class="say">英文提示</button></div><div id="hintT"></div>
       <div class="fb" id="fb" aria-live="polite"></div><div class="row"><button class="pri" id="nx" hidden>下一题</button></div>`);
     let hinted=false,over=false;
     $('#hintB').onclick=()=>{hinted=true;$('#hintB').disabled=true;$('#hintT').innerHTML=`<div class="hintbox">${esc(g.en)}<span class="note">　（用了提示，这题算半分）</span></div>`};
-    const end=ok=>{if(over)return;over=true;$('#hintB').disabled=true;const fb=$('#fb');fb.className='fb '+(ok?'ok':'bad');
-      fb.innerHTML=(ok?(hinted?'答对了（用了提示，算半分）。':'答对了！'):(g.t==='fix'?`错字是“${esc(g.bad)}”，应该改成“${esc(g.right)}”。`:'还不对。'))+`<div class="muted" style="font-weight:400">正确的句子：<span class="kai">${esc(good)}</span></div>`;
-      const val=ok?(hinted?.5:1):0;R.score+=val;if(val<1)R.wt.add(g.topic);save();battleTurn(B,val);R.k++;nextBtn();if(ok)say(good)};
+    const end=(ok,part)=>{if(over)return;over=true;$('#hintB').disabled=true;const fb=$('#fb');fb.className='fb '+(ok?'ok':'bad');
+      fb.innerHTML=(ok?(hinted?'答对了（用了提示，算半分）。':'答对了！'):part!==undefined?`配对正确 ${Math.round(part*g.L.length)} / ${g.L.length}。`:(g.t==='fix'?`错字是“${esc(g.bad)}”，应该改成“${esc(g.right)}”。`:'还不对。'))+`<div class="muted" style="font-weight:400">${g.t==='match'?'参考答案':'正确的句子'}：<span class="kai">${esc(good)}</span></div>`;
+      const val=(part!==undefined?part:ok?1:0)*(hinted?.5:1);R.score+=val;if(val<1)R.wt.add(g.topic);save();battleTurn(B,val);R.k++;nextBtn();if(ok)say(good)};
     if(g.t==='pick')app.querySelectorAll('.gopt').forEach(b=>b.onclick=()=>{const ok=b.dataset.o===g.o[g.a];app.querySelectorAll('.gopt').forEach(x=>{x.disabled=true;if(x.dataset.o===g.o[g.a])x.classList.add('ok')});if(!ok)b.classList.add('bad');end(ok)});
     else if(g.t==='order'){const pick=[];const ans=$('#ans'),chk=$('#chk');
       const draw=()=>{ans.innerHTML=pick.map((i,k)=>`<button class="chipw" data-k="${k}">${esc(it.parts[i])}</button>`).join('')||'<span class="note">点下面的词语</span>';
@@ -606,6 +679,14 @@ function run(R){
         ans.querySelectorAll('.chipw').forEach(b=>{b.disabled=over;b.onclick=()=>{pick.splice(+b.dataset.k,1);draw()}})};
       app.querySelectorAll('#pool .chipw').forEach(b=>b.onclick=()=>{pick.push(+b.dataset.i);draw()});
       chk.onclick=()=>{const ok=g.ans.includes(pick.map(i=>it.parts[i]).join(''));ans.style.borderColor=ok?'var(--ok)':'var(--red)';end(ok);draw()};draw()}
+    else if(g.t==='match'){let sel=null;const pair={};const okR=(l,w)=>w===g.R[l]||((g.alt||{})[g.L[l]]||[]).includes(w);
+      const draw=()=>{app.querySelectorAll('[data-l]').forEach(b=>{const l=+b.dataset.l;b.className='mw'+(sel===l?' sel':'')+(l in pair?` c${l}`:'');b.disabled=over});
+        app.querySelectorAll('[data-r]').forEach(b=>{const r=+b.dataset.r;const l=Object.keys(pair).find(k=>pair[k]===r);b.className='mw'+(l!==undefined?` c${l}`:'');b.disabled=over});
+        $('#chk').disabled=over||Object.keys(pair).length!==g.L.length};
+      app.querySelectorAll('[data-l]').forEach(b=>b.onclick=()=>{const l=+b.dataset.l;if(l in pair){delete pair[l];sel=l}else sel=sel===l?null:l;draw()});
+      app.querySelectorAll('[data-r]').forEach(b=>b.onclick=()=>{if(sel===null)return;const r=+b.dataset.r;for(const k in pair)if(pair[k]===r)delete pair[k];pair[sel]=r;sel=null;draw()});
+      $('#chk').onclick=()=>{let n=0;g.L.forEach((_,l)=>{const ok=okR(l,it.R[pair[l]]);if(ok)n++;const lb=app.querySelector(`[data-l="${l}"]`),rb=app.querySelector(`[data-r="${pair[l]}"]`);lb.dataset.m=rb.dataset.m=ok?'ok':'bad'});
+        const part=n/g.L.length;end(part===1,part===1?undefined:part);draw();app.querySelectorAll('.mw[data-m]').forEach(b=>b.classList.add(b.dataset.m))};draw()}
     else{const bi=[...g.s].indexOf(g.bad);app.querySelectorAll('.fc').forEach(b=>b.onclick=()=>{const ok=+b.dataset.i===bi;app.querySelectorAll('.fc').forEach(x=>{x.disabled=true;if(+x.dataset.i===bi)x.classList.add('ok')});if(!ok)b.classList.add('bad');end(ok)})}
   }
   function showWrite(it){

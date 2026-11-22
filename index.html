@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>EZ华文复习</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700;900&family=Noto+Serif+SC:wght@600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700;900&family=Noto+Serif+SC:wght@600&family=ZCOOL+QingKe+HuangYou&display=swap" rel="stylesheet">
 <style>
 /* VOICE: friendly study adventure for 11-year-olds; learning first, battle as the reward layer
    IDEA: the 田字格 exercise book: levels are grid squares, monsters are "字怪" defeated by correct answers
@@ -211,6 +211,116 @@ td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}
 .mw.ok{outline:3px solid var(--ok);outline-offset:1px}.mw.bad{outline:3px dashed var(--red);outline-offset:1px}
 @media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
 </style>
+<style id="theme">
+/* THEME: cool adventure — sea-teal night sky, jade actions, torch-gold rewards, ember for 田字格 and mistakes.
+   One bold thing: the home map of six regions (小一 草原 → 小六 火山). Everything else stays calm. */
+:root{
+--page:light-dark(#e8f0ee,#0d181b);--bg:light-dark(#ffffff,#152327);--ink:light-dark(#14262c,#e6efed);--muted:light-dark(#55676c,#94a8ad);
+--cover:light-dark(#123a4a,#0e2c38);--jade:light-dark(#11806a,#2fb393);--jade-d:light-dark(#0b5c4c,#1d7a64);
+--gold:light-dark(#c47a0c,#f0b347);--torch:#f4a62a;--red:light-dark(#cf3d32,#f06a5c);
+--soft:light-dark(#eef4f2,#1b2c31);--line:light-dark(#cfdcd9,#29404a);--shadow:light-dark(#b9cbc6,#06100f)}
+body{background:var(--page)}
+.disp,h2,header h1,.hero-card .nm,.sum h2,.gate b{font-family:"ZCOOL QingKe HuangYou","Noto Sans SC",sans-serif;font-weight:400;letter-spacing:.02em}
+h2{font-size:26px}
+.disp,h2,header h1,.hero-card .nm,.sum h2,.gate b{font-weight:700;font-synthesis:none}
+.home aside .hero-card{grid-template-columns:minmax(0,1fr)}.home aside .hero-card>svg{display:none}
+@media(max-width:520px){.chip{min-height:36px;padding:4px 11px;font-size:13px}.chips{gap:6px}}
+/* header: night sea chart */
+header.cover{background:var(--cover) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='360' height='180' viewBox='0 0 360 180'%3E%3Cg fill='none' stroke='%23ffffff' stroke-opacity='.07' stroke-width='1.5'%3E%3Cpath d='M-20 60C40 20 90 90 150 55S260 10 380 60'/%3E%3Cpath d='M-20 90C40 50 90 120 150 85S260 40 380 90'/%3E%3Cpath d='M-20 120C40 80 90 150 150 115S260 70 380 120'/%3E%3Cellipse cx='290' cy='140' rx='40' ry='16'/%3E%3Cellipse cx='290' cy='140' rx='22' ry='8'/%3E%3C/g%3E%3C/svg%3E");border-bottom:4px solid var(--torch)}
+header h1{font-size:clamp(28px,4vw,40px)}
+header h1 small{font-family:"Noto Sans SC",sans-serif;letter-spacing:0}
+.chip{background:rgba(255,255,255,.1);border:1.5px solid rgba(255,255,255,.28);font-weight:500}
+.chip:hover{background:rgba(255,255,255,.2)}
+.chip.sfx[aria-pressed=false]{opacity:.6;text-decoration:line-through}
+/* chunky buttons */
+button{border-width:2px;border-radius:12px;box-shadow:0 3px 0 var(--line);transition:transform .08s,box-shadow .08s}
+button:active:not(:disabled){transform:translateY(2px);box-shadow:0 1px 0 var(--line)}
+.pri{background:var(--jade);border-color:var(--jade-d);color:#fff;box-shadow:0 4px 0 var(--jade-d);font-weight:700}
+.pri:active:not(:disabled){box-shadow:0 1px 0 var(--jade-d)}
+.ghost,.chip,.fc,.cz,.say.ghost{box-shadow:none}
+.ghost:active,.chip:active{transform:none}
+button:focus-visible{outline-color:var(--torch)}
+.card{border:2px solid var(--line);border-radius:18px;box-shadow:0 4px 0 var(--line)}
+.next-card{border:0}
+.meter{height:12px;border:0;background:light-dark(#dbe7e4,#22363c)}
+.meter i{background:var(--jade);border-radius:99px}
+.meter.xp i{background:linear-gradient(90deg,var(--torch),#ffd36b)}
+.gear span.got{background:light-dark(#fff4dc,#33290f);border-color:var(--torch);color:light-dark(#8a5300,#ffc865)}
+.daily{border-left-width:8px;border-left-color:var(--red)}
+.storycard{border-left-color:var(--torch)}
+.stars{color:var(--torch);text-shadow:0 2px 0 light-dark(#c47a0c,#7a4d05)}.stars .e{color:var(--line);text-shadow:none}
+.lesson{border:2px solid var(--line);border-radius:14px;background:var(--bg)}
+.reward{background:light-dark(#fff4dc,#2f2610);border:2px solid var(--torch);border-radius:14px;font-weight:500}
+.opt,.pso,.gopt,.mw,.chipw{box-shadow:0 3px 0 var(--line)}
+.opt:hover:not(:disabled),.pso:hover:not(:disabled),.gopt:hover:not(:disabled){border-color:var(--jade)}
+.opt.ok,.pso.ok{animation:pop .35s}
+@keyframes pop{40%{transform:scale(1.06)}}
+.tog[aria-pressed=true]{border-color:var(--jade);background:light-dark(#e3f3ee,#173a33)}
+.passage{background:light-dark(#f3f8f6,#18282c);border:2px solid var(--line)}
+.tier{border-width:2px;border-radius:18px;background:var(--bg)}
+/* battle arena: dusk sky over a cliff */
+.arena{border:2px solid var(--line);background:
+ radial-gradient(circle at 82% 22%,rgba(255,214,120,.55) 0 18px,transparent 19px),
+ linear-gradient(transparent 70%,light-dark(#7fa79a,#1f3a33) 70%,light-dark(#5e8a7c,#16302a)),
+ linear-gradient(light-dark(#bfe0e6,#183846),light-dark(#f6e2c4,#2c3141))}
+.arena .tag{background:rgba(255,255,255,.75);color:#14262c;border-radius:99px;padding:0 10px}
+.vs{font-family:"ZCOOL QingKe HuangYou",sans-serif;font-size:20px;color:#fff;text-shadow:0 2px 0 #c47a0c}
+.bmsg{color:light-dark(#14262c,#f3efe4)}
+.hop{animation:hop .5s}@keyframes hop{30%{transform:translateY(-18px)}60%{transform:translateY(0)}75%{transform:translateY(-6px)}}
+.wobble{animation:wobble .5s}@keyframes wobble{20%{transform:rotate(-8deg)}40%{transform:rotate(7deg)}60%{transform:rotate(-4deg)}80%{transform:rotate(2deg)}}
+.combo-pop{position:absolute;left:50%;top:44%;transform:translate(-50%,-50%);font-family:"ZCOOL QingKe HuangYou",sans-serif;font-size:38px;color:#fff;-webkit-text-stroke:1.5px #9a5a00;text-shadow:0 4px 0 #c47a0c;pointer-events:none;animation:comboPop 1s forwards;white-space:nowrap;z-index:2}
+@keyframes comboPop{0%{transform:translate(-50%,-50%) scale(.3);opacity:0}25%{transform:translate(-50%,-50%) scale(1.15);opacity:1}70%{transform:translate(-50%,-60%) scale(1)}100%{transform:translate(-50%,-90%);opacity:0}}
+/* results: stars pop in */
+.sum .stars{font-size:52px;display:inline-block}
+.sum .stars.fxed{animation:starIn .6s cubic-bezier(.3,1.6,.5,1)}
+@keyframes starIn{0%{transform:scale(.2) rotate(-30deg);opacity:0}100%{transform:none;opacity:1}}
+/* level-up burst */
+.lvup{position:fixed;inset:0;z-index:20;display:grid;place-items:center;background:rgba(8,24,30,.82);animation:fadeIn .25s}
+.lvup>div{position:relative;text-align:center;color:#fff;padding:30px 40px}
+.lvup .rays{position:absolute;left:50%;top:50%;width:420px;height:420px;margin:-210px 0 0 -210px;border-radius:50%;background:repeating-conic-gradient(rgba(255,211,107,.35) 0 10deg,transparent 10deg 20deg);animation:spin 6s linear infinite;mask:radial-gradient(circle,#000 30%,transparent 70%);-webkit-mask:radial-gradient(circle,#000 30%,transparent 70%)}
+.lvup .hb{position:relative;width:150px;height:150px;margin:0 auto;animation:hop .7s .2s}
+.lvup .hb svg{width:100%;height:100%;overflow:visible}
+.lvup h3{position:relative;font-family:"ZCOOL QingKe HuangYou",sans-serif;font-weight:400;font-size:46px;margin:8px 0 0;color:#ffd36b;text-shadow:0 4px 0 #8a5300}
+.lvup p{position:relative;margin:4px 0 0;font-size:17px}
+@keyframes spin{to{transform:rotate(360deg)}}@keyframes fadeIn{from{opacity:0}}
+#confetti{position:fixed;inset:0;pointer-events:none;z-index:21}
+/* home: greeting */
+.greet{display:grid;grid-template-columns:110px minmax(0,1fr);gap:14px;align-items:center;margin-bottom:16px}
+.greet>.hb svg{width:110px;height:110px;overflow:visible;animation:idle 3s ease-in-out infinite}
+@keyframes idle{50%{transform:translateY(-4px)}}
+.bubble{position:relative;background:var(--bg);border:2px solid var(--line);border-radius:18px;padding:14px 18px;box-shadow:0 4px 0 var(--line)}
+.bubble::before{content:"";position:absolute;left:-12px;top:34px;border:10px solid transparent;border-right-color:var(--line);border-left:0}
+.bubble::after{content:"";position:absolute;left:-8px;top:36px;border:8px solid transparent;border-right-color:var(--bg);border-left:0}
+.bubble .hi{font-size:19px;font-weight:700;margin:0}
+.bubble .nx{margin:6px 0 10px;color:var(--muted)}
+.bubble .nx b{color:var(--ink)}
+@media(max-width:520px){.greet{grid-template-columns:76px minmax(0,1fr)}.greet>.hb svg{width:76px;height:76px}}
+/* home: region map */
+.regions{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+@media(max-width:600px){.regions{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}}
+.region{--rc:#4a9e63;position:relative;border-radius:18px;padding:12px 12px 12px;color:#fff;overflow:hidden;box-shadow:0 4px 0 color-mix(in srgb,var(--rc) 60%,#000);
+ background:radial-gradient(circle at 85% 15%,rgba(255,255,255,.22) 0 26px,transparent 27px),linear-gradient(160deg,color-mix(in srgb,var(--rc) 85%,#fff),var(--rc))}
+.region::after{content:"";position:absolute;inset:auto 0 0 0;height:38%;background:var(--shape) bottom/100% 100% no-repeat;opacity:.22;pointer-events:none}
+.region .rn{position:relative;display:flex;justify-content:space-between;align-items:baseline;font-size:14px;font-weight:700;margin-bottom:8px;text-shadow:0 1px 2px rgba(0,0,0,.25)}
+.region .rn span{font-family:"ZCOOL QingKe HuangYou",sans-serif;font-weight:400;font-size:20px}
+.r1{--rc:#3f9a5c;--shape:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 30' preserveAspectRatio='none'%3E%3Cpath d='M0 30V18Q25 6 50 16T100 12V30Z' fill='%23fff'/%3E%3C/svg%3E")}
+.r2{--rc:#1f8f9a;--shape:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 30' preserveAspectRatio='none'%3E%3Cpath d='M0 30V16Q12 8 25 16T50 16T75 16T100 16V30Z' fill='%23fff'/%3E%3C/svg%3E")}
+.r3{--rc:#356fc4;--shape:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 30' preserveAspectRatio='none'%3E%3Cpath d='M0 30V8L30 26L60 6L100 24V30Z' fill='%23fff'/%3E%3C/svg%3E")}
+.r4{--rc:#6a50c4;--shape:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 30' preserveAspectRatio='none'%3E%3Cpath d='M0 30L12 10L20 30L34 4L46 30L60 12L70 30L84 2L100 30Z' fill='%23fff'/%3E%3C/svg%3E")}
+.r5{--rc:#c8691e;--shape:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 30' preserveAspectRatio='none'%3E%3Cpath d='M0 30V6H22V18H44V10H70V20H100V30Z' fill='%23fff'/%3E%3C/svg%3E")}
+.r6{--rc:#b8384a;--shape:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 30' preserveAspectRatio='none'%3E%3Cpath d='M0 30L38 4H62L100 30Z' fill='%23fff'/%3E%3C/svg%3E")}
+.gates{position:relative;display:grid;grid-template-columns:1fr 1fr;gap:8px;z-index:1}
+.gate{display:flex;flex-direction:column;align-items:center;gap:4px;padding:8px 4px 8px;border:0;border-radius:12px;background:rgba(255,255,255,.94);color:#14262c;box-shadow:0 3px 0 rgba(0,0,0,.25);min-height:0}
+.gate b{font-size:clamp(24px,3vw,30px);line-height:1.1}
+.gate .pb{width:78%;height:7px;border-radius:99px;background:#dfe7e5;overflow:hidden}.gate .pb i{display:block;height:100%;background:var(--rc);border-radius:99px}
+.gate small{font-size:12px;color:#55676c;font-variant-numeric:tabular-nums}
+.gate.full{background:#fff7e0}.gate.full small{color:#8a5300;font-weight:700}
+.gate.next{outline:3px solid var(--torch);outline-offset:2px;animation:beckon 1.6s ease-in-out infinite}
+@keyframes beckon{50%{outline-offset:5px}}
+.gate:disabled{opacity:.55}
+.regions-note{margin-top:10px}
+@media(prefers-reduced-motion:reduce){.greet>.hb svg,.gate.next{animation:none}}
+</style>
 </head>
 <body>
 <header class="cover band">
@@ -221,6 +331,7 @@ td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}
       <button class="chip" id="chipHero">我的英雄</button>
       <button class="chip" id="chipReview">复习本 0</button>
       <button class="chip" id="chipProg">我的进度</button>
+      <button class="chip sfx" id="chipSfx" aria-pressed="true" title="打开或关掉音效">音效</button>
     </div>
   </div>
 </header>
@@ -391,7 +502,8 @@ function chips(){
   const st=S.streak.last===today()||S.streak.last===yesterday()?S.streak.n:0;
   $('#hello').textContent=(S.name?`${S.name}，欢迎回来`:'小一至小六')+(st?` · 连续学习 ${st} 天`:' · 认读、写字、阅读');
 }
-$('#chipHome').onclick=()=>go('home');$('#chipProg').onclick=()=>go('progress');
+$('#chipHome').onclick=()=>go('home');
+{const sb=$('#chipSfx');const upd=()=>{sb.setAttribute('aria-pressed',String(S.set.sfx!==false));sb.textContent=S.set.sfx!==false?'音效 开':'音效 关'};upd();sb.onclick=()=>{S.set.sfx=S.set.sfx===false;save();upd();if(S.set.sfx)sfx('ok')}}$('#chipProg').onclick=()=>go('progress');
 $('#chipReview').onclick=()=>startReview();$('#chipHero').onclick=()=>go('hero');
 
 /* ================= recommendation ================= */
@@ -456,20 +568,26 @@ function heroCard(full){
 function viewHome(){
   const nx=nextStep(),st=skillStats();
   const pc=t=>t[2]?Math.round(t[0]/t[2]*100):0;
+  const RG=[['小一','草原'],['小二','海湾'],['小三','河谷'],['小四','水晶洞'],['小五','峡谷'],['小六','火山']];
+  const gate=L=>{const ok=!!CONTENT[L.id],p=levelPct(L.id),pp=Math.round(p*100);
+    return `<button class="gate ${ok?'':'off'} ${pp>=100?'full':''} ${nx.lv===L.id?'next':''}" ${ok?`data-lv="${L.id}"`:'disabled'} aria-label="${L.name}，${ok?pp+'%':'制作中'}${nx.lv===L.id?'，下一站':''}"><b>${L.name}</b><span class="pb"><i style="width:${pp}%"></i></span><small>${ok?(pp>=100?'★ 全部完成':pp+'%'):'制作中'}</small></button>`};
+  const hi=(()=>{const h=new Date().getHours();return h<12?'早上好':h<18?'下午好':'晚上好'})();
+  const won=S.hero.won.length;
   app.innerHTML=`<div class="home">
    <section>
+    <div class="greet">${S.hero.type?`<div class="hb" aria-hidden="true">${heroSVG(S.hero.type,gearOwned())}</div>`:'<div></div>'}
+     <div class="bubble"><p class="hi">${hi}，${esc(S.name)}！${won?`我们已经打败了 ${won} 只字怪。`:'一起去打败字怪吧！'}</p>
+      <p class="nx">下一站：<b>${esc(nx.t)}</b><br>${esc(nx.d)}</p>${nx.btn?`<button class="pri" id="nxBtn">${nx.btn}</button>`:''}</div></div>
     <div class="daily card"><div><h3 style="margin:0">每日一练 <span class="note" style="font-weight:400">约 5 分钟 · 8 题</span></h3>
      <p class="note" style="margin:4px 0 0">${('DAY|'+today()) in S.best?`今天已经完成了 ✓ ${starHtml(S.stars['DAY|'+today()]||0)}`:'复习本 + 你现在的级别 + 一点语文应用，每天练一点。'}${dailyStreak()?`　连续 ${dailyStreak()} 天`:''}</p></div>
      <button class="pri" id="dayGo">${('DAY|'+today()) in S.best?'再练一次':'开始今天的练习'}</button></div>
     ${EZ.story?`<div class="daily card storycard"><div><h3 style="margin:0">冒险地图 <span class="note" style="font-weight:400">第 ${S.story.read.length} / ${EZ.story.length} 章</span></h3>
      <p class="note" style="margin:4px 0 0">${storyUnlocked()>S.story.read.length?'<b style="color:var(--red)">有新章节可以看！</b>':(()=>{const n=EZ.story.find(c=>totalStars()<c.need);return n?`再拿 ★${n.need-totalStars()} 就能解锁下一章。`:'冒险全部解锁了！'})()}</p></div>
      <button id="storyGo">打开地图</button></div>`:''}
-    <h2>选一个级别</h2>
-    <div class="map">${LEVELS.map(L=>{const ok=!!CONTENT[L.id],p=levelPct(L.id);return `<button class="cell kai ${ok?'':'off'} ${nx.lv===L.id?'next':''}" ${ok?`data-lv="${L.id}"`:'disabled'} aria-label="${L.name}">
-      <span class="fill" style="height:${Math.round(p*100)}%"></span><b>${L.name}</b><span>${ok?Math.round(p*100)+'%':'制作中'}</span></button>`}).join('')}</div>
-    <p class="note">从小一到小六，越往后越难。你可以选任何一个已开放的级别。格子填满表示拿到了全部星星。</p>
-    <div class="card next-card" style="margin-top:18px"><span class="muted">下一步</span><div class="t">${esc(nx.t)}</div><p class="muted" style="margin:0 0 12px">${esc(nx.d)}</p>${nx.btn?`<button class="pri" id="nxBtn">${nx.btn}</button>`:''}</div>
-    ${PS.length?`<div class="card" style="margin-top:14px"><h3>PSLE 备考</h3><p class="muted" style="margin:0 0 10px">短文填充、完成对话，从入门到挑战，一步一步来。</p><button class="pri" id="psGo">进入 PSLE 备考</button></div>`:''}
+    <h2 style="margin-top:22px">选一个地区</h2>
+    <div class="regions">${RG.map(([g,n],k)=>`<div class="region r${k+1}"><div class="rn"><span>${n}</span>${g}</div><div class="gates">${LEVELS.filter(L=>L.id[0]===String(k+1)).map(gate).join('')}</div></div>`).join('')}</div>
+    <p class="note regions-note">从小一的草原到小六的火山，越往后越难。你可以去任何一个已开放的级别，进度条满了就是拿到了全部星星。</p>
+    ${PS.length?`<div class="card" style="margin-top:14px"><h3>PSLE 备考</h3><p class="muted" style="margin:0 0 10px">短文填充、完成对话、听力理解，从入门到挑战，一步一步来。</p><button class="pri" id="psGo">进入 PSLE 备考</button></div>`:''}
    </section>
    <aside style="display:grid;gap:16px;align-content:start">
     ${S.set.battle?`<div class="card">${heroCard()}</div>`:''}
@@ -828,10 +946,41 @@ function viewChapter(k){
   if($('#prevC'))$('#prevC').onclick=()=>viewChapter(k-1);if($('#nextC'))$('#nextC').onclick=()=>viewChapter(k+1);
   app.querySelectorAll('.pso').forEach(b=>b.onclick=()=>{const x=qo[+b.dataset.j];const fb=$('#sfb');
     if(x.ok){app.querySelectorAll('.pso').forEach(y=>y.disabled=true);b.classList.add('ok');fb.className='fb ok';
-      if(!S.story.quiz.includes(k)){S.story.quiz.push(k);S.hero.xp+=20;save();chips();fb.textContent='答对了！英雄得到 20 点经验。'}else fb.textContent='答对了！'}
-    else{b.classList.add('bad');b.disabled=true;fb.className='fb bad';fb.textContent='再读一读故事，试试别的答案。'}});
+      if(!S.story.quiz.includes(k)){const l0=heroLv();S.story.quiz.push(k);S.hero.xp+=20;sfx('win');if(heroLv()>l0)setTimeout(()=>levelUpFX(heroLv()),600);save();chips();fb.textContent='答对了！英雄得到 20 点经验。'}else fb.textContent='答对了！'}
+    else{sfx('bad');b.classList.add('bad');b.disabled=true;fb.className='fb bad';fb.textContent='再读一读故事，试试别的答案。'}});
   window.scrollTo(0,0);
 }
+
+/* ================= fun effects: sounds, confetti, level-up ================= */
+const reduceMotion=()=>window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
+let actx=null;
+function sfxOn(){return S.set.sfx!==false}
+function sfxTone(f,t0,dur,type,vol){const o=actx.createOscillator(),g=actx.createGain();o.type=type||'triangle';o.frequency.setValueAtTime(f,actx.currentTime+t0);
+  g.gain.setValueAtTime(0.0001,actx.currentTime+t0);g.gain.exponentialRampToValueAtTime(vol||.09,actx.currentTime+t0+.015);g.gain.exponentialRampToValueAtTime(0.0001,actx.currentTime+t0+dur);
+  o.connect(g);g.connect(actx.destination);o.start(actx.currentTime+t0);o.stop(actx.currentTime+t0+dur+.05)}
+function sfx(kind){
+  if(!sfxOn())return;
+  try{if(window.speechSynthesis&&speechSynthesis.speaking)return}catch(e){}
+  try{actx=actx||new (window.AudioContext||window.webkitAudioContext)();if(actx.state==='suspended')actx.resume()}catch(e){return}
+  const N={ok:[[660,0,.12],[990,.08,.18]],bad:[[220,0,.22,'sine',.07],[196,.12,.25,'sine',.06]],combo:[[660,0,.1],[830,.07,.1],[990,.14,.1],[1320,.21,.22]],
+    win:[[523,0,.14],[659,.12,.14],[784,.24,.14],[1047,.36,.4]],lvup:[[392,0,.12],[523,.1,.12],[659,.2,.12],[784,.3,.12],[1047,.4,.5,'square',.05]],flip:[[880,0,.06,'sine',.05]]}[kind];
+  if(N)N.forEach(([f,t,d,ty,v])=>sfxTone(f,t,d,ty,v))}
+function bumpEl(el,cls){if(!el||reduceMotion())return;el.classList.remove(cls);void el.offsetWidth;el.classList.add(cls);setTimeout(()=>el.classList.remove(cls),700)}
+function comboPop(txt){const a=$('#arena');if(!a||reduceMotion())return;const d=document.createElement('div');d.className='combo-pop';d.textContent=txt;a.appendChild(d);setTimeout(()=>d.remove(),1050)}
+function confetti(){
+  if(reduceMotion())return;let c=$('#confetti');if(c)c.remove();c=document.createElement('canvas');c.id='confetti';document.body.appendChild(c);
+  const W=c.width=innerWidth*devicePixelRatio,H=c.height=innerHeight*devicePixelRatio,x=c.getContext('2d'),col=['#f4a62a','#ffd36b','#2fb393','#356fc4','#f06a5c','#ffffff'];
+  const P=Array.from({length:140},()=>({x:W/2+(Math.random()-.5)*W*.3,y:H*.35,vx:(Math.random()-.5)*W*.022,vy:-Math.random()*H*.022-H*.006,s:(5+Math.random()*7)*devicePixelRatio,r:Math.random()*6,vr:(Math.random()-.5)*.3,c:col[Math.floor(Math.random()*col.length)]}));
+  let t=0;(function f(){x.clearRect(0,0,W,H);P.forEach(p=>{p.vy+=H*.0009;p.vx*=.99;p.x+=p.vx;p.y+=p.vy;p.r+=p.vr;x.save();x.translate(p.x,p.y);x.rotate(p.r);x.fillStyle=p.c;x.fillRect(-p.s/2,-p.s/4,p.s,p.s/2);x.restore()});
+    if(++t<130)requestAnimationFrame(f);else c.remove()})()}
+function levelUpFX(lv){
+  sfx('lvup');const d=document.createElement('div');d.className='lvup';d.setAttribute('role','dialog');d.setAttribute('aria-label','升级');
+  d.innerHTML=`<div><div class="rays"></div><div class="hb">${heroSVG(S.hero.type,gearOwned())}</div><h3>升级！Lv ${lv}</h3><p>${HEROES[S.hero.type].name}变强了！${upPoints()?`有 ${upPoints()} 个升级点，到“我的英雄”选择升级。`:""}</p><p style="font-size:13px;opacity:.75;margin-top:10px">点一下继续</p></div>`;
+  const close=()=>{d.remove();document.removeEventListener('keydown',k)},k=e=>{if(e.key==='Escape'||e.key==='Enter')close()};
+  d.onclick=close;document.addEventListener('keydown',k);document.body.appendChild(d);if(!reduceMotion())confetti();setTimeout(()=>{if(d.isConnected)close()},4000)}
+/* watch result screens: pop the stars, cheer for 3 stars */
+new MutationObserver(()=>{app.querySelectorAll('.sum .stars:not([data-fx])').forEach(s=>{s.dataset.fx='1';s.classList.add('fxed');const e=s.querySelector('.e'),n=(s.textContent.match(/★/g)||[]).length-(e?e.textContent.length:0);
+  if(n>=3){sfx('win');setTimeout(confetti,250)}else if(n>=1)sfx('ok')})}).observe(app,{childList:true,subtree:true});
 
 function viewHero(){
   const all=[];for(const L of LEVELS){if(!CONTENT[L.id])continue;CONTENT[L.id].lessons.forEach((l,i)=>all.push([`${L.id}|${i}`,monFor(L.id,i),`${L.name} ${l.n}`]));if(CONTENT[L.id].colloc&&CONTENT[L.id].colloc.length)all.push([`${L.id}|c`,collMon(L.id),`${L.name} 词语搭配`]);if(CONTENT[L.id].grammar&&CONTENT[L.id].grammar.length)all.push([`${L.id}|g`,gramMon(L.id),`${L.name} 语法练习`]);CONTENT[L.id].passages.forEach((p,i)=>all.push([`${L.id}|p${i}`,bossFor(L.id,i),`${L.name} 阅读${i+1}`]))}
@@ -917,17 +1066,19 @@ function drawBattle(B){
 }
 function floatDmg(side,txt,heal){const f=$(side);if(!f)return;const d=document.createElement('span');d.className='dmg'+(heal?' heal':'');d.textContent=txt;f.appendChild(d);setTimeout(()=>d.remove(),950)}
 function battleTurn(B,val){
-  if(!B)return;const msg=$('#bmsg');
+  if(!B){sfx(val>0?'ok':'bad');return}const msg=$('#bmsg');
   if(val>0){B.xp+=Math.round(val*10);
     if(B.ko){if(msg)msg.textContent='英雄在休息，答对了也有经验。';return}
     if(val===1)B.combo++;else B.combo=0;
     const mult=B.combo>=comboAt()?1.5:1;const dmg=Math.round(heroAtk()*val*mult);
     if(B.won){if(msg)msg.textContent=`答对了！经验 +${Math.round(val*10)}`;drawBattle(B);return}
+    sfx(mult>1?'combo':'ok');bumpEl($('#fh'),'hop');if(mult>1)comboPop(B.combo===comboAt()?'连击！':'连击 ×'+B.combo);
     B.hp-=dmg;bump($('#fh .body'),'atkR');setTimeout(()=>{bump($('#fm .body'),'shake');floatDmg('#fm','-'+dmg)},220);
     if(msg)msg.textContent=val<1?`答对了一部分，攻击减弱：-${dmg}`:mult>1?`连击！-${dmg}`:`攻击！-${dmg}`;
     if(B.hp<=0){B.won=true;setTimeout(()=>{$('#fm')?.classList.add('ko');if(msg)msg.textContent=`打败了${B.mon.name}！`},450)}
-  }else{B.combo=0;
+  }else{B.combo=0;sfx('bad');
     if(B.won||B.ko){drawBattle(B);return}
+    bumpEl($('#fh'),'wobble');
     bump($('#fm .body'),'atkL');
     if(B.dodge){B.dodge=false;if(msg)msg.textContent='飞天披风挡住了攻击！';setTimeout(()=>floatDmg('#fh','挡住'),220)}
     else{B.hhp-=B.hit;const lost=B.hhp<=0;setTimeout(()=>{bump($('#fh .body'),'shake');floatDmg('#fh',lost?'-♥':'-'+B.hit)},220);
@@ -943,7 +1094,7 @@ function endBattle(B,lvBefore,gearBefore){
   if(B.won&&B.monId&&!S.hero.won.includes(B.monId))S.hero.won.push(B.monId);
   checkBadges();save();chips();
   out+=B.won?`<div class="reward">打败了 <b>${B.mon.name}</b>！经验 +${B.xp+bonus}</div>`:`<div class="reward">${B.mon.name}逃走了。经验 +${B.xp}。下次再来！</div>`;
-  const lv=heroLv();const tg=$('#fh .tag');if(tg)tg.textContent=`${HEROES[S.hero.type].name} Lv${lv}`;if(lv>lvBefore)out+=`<div class="reward">${HEROES[S.hero.type].name} 升到 <b>Lv ${lv}</b>！获得 ${lv-lvBefore} 个升级点，到“我的英雄”选择升级。</div>`;
+  const lv=heroLv();const tg=$('#fh .tag');if(tg)tg.textContent=`${HEROES[S.hero.type].name} Lv${lv}`;if(lv>lvBefore){setTimeout(()=>levelUpFX(lv),1200);}if(lv>lvBefore)out+=`<div class="reward">${HEROES[S.hero.type].name} 升到 <b>Lv ${lv}</b>！获得 ${lv-lvBefore} 个升级点，到“我的英雄”选择升级。</div>`;
   gearOwned().filter(g=>!gearBefore.includes(g)).forEach(k=>{const g=GEAR.find(x=>x[0]===k);out+=`<div class="reward">新装备：<b>${g[1]}</b>（${g[3]}）</div>`});
   return out;
 }

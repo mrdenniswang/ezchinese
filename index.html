@@ -366,7 +366,8 @@ const MON_NAMES=['糊涂虫','乱笔怪','忘字妖','墨点精','歪歪兽','�
 const BOSS_NAMES=['大雾王','乌云王','迷宫王','黑墨王','狂风王','冰冻王','打雷王','沙尘王','暗影王','石头王','火焰王','海浪王'];
 const HEROES={mo:{name:'墨墨',desc:'一滴会写字的墨水'},zhi:{name:'纸纸',desc:'用作业纸折成的纸鹤'},shi:{name:'狮狮',desc:'爱打鼓的小醒狮'}};
 const GEAR=[['brush','神笔',6,'攻击 +4'],['shield','砚台盾',15,'多一条命'],['gold','金墨',30,'答对 2 题就连击'],['cape','飞天披风',50,'每场挡住一次攻击']];
-const BADGES=[['first','第一颗星'],['streak3','连续学习三天'],['lv1A','一上完成'],['clear','清空复习本'],['boss','打败第一个大王'],['daily7','每日一练七天'],['story','完成冒险故事']];
+const badgeName=k=>{const b=BADGES.find(x=>x[0]===k);return b?b[1]:'新徽章'};
+const BADGES=[['first','第一颗星'],['streak3','连续学习三天'],...LEVELS.map(L=>['lv'+L.id,L.name+'完成']),['clear','清空复习本'],['boss','打败第一个大王'],['daily7','每日一练七天'],['story','完成冒险故事']];
 
 /* ================= state ================= */
 const KEY='ez-cl-v1';let canStore=true;
@@ -767,7 +768,7 @@ function startPS(sid,prev){
     st.over=true;const pct=st.val.reduce((a,b)=>a+b,0)/N;record(id,pct);
     const show=()=>{const rw=endBattle(B,lv0,g0);
       $('#ps').innerHTML=passage();$('#panel').innerHTML='';
-      $('#rw').innerHTML=`<div class="card sum" style="margin-top:14px;text-align:left"><h2 style="text-align:center">${esc(set.title)} · 完成</h2><div style="text-align:center">${starHtml(starsOf(pct))}<p style="font-size:20px;margin:6px 0">得分 ${Math.round(st.val.reduce((a,b)=>a+b,0)*10)/10} / ${N}</p>${rw}${storyNews()}${newBadge?`<div class="reward">新徽章：${BADGES.find(x=>x[0]===newBadge)[1]}</div>`:''}</div>
+      $('#rw').innerHTML=`<div class="card sum" style="margin-top:14px;text-align:left"><h2 style="text-align:center">${esc(set.title)} · 完成</h2><div style="text-align:center">${starHtml(starsOf(pct))}<p style="font-size:20px;margin:6px 0">得分 ${Math.round(st.val.reduce((a,b)=>a+b,0)*10)/10} / ${N}</p>${rw}${storyNews()}${newBadge?`<div class="reward">新徽章：${badgeName(newBadge)}</div>`:''}</div>
         ${st.mode==='exam'||st.val.some(v=>v<1)?`<h3 style="margin-top:14px">每一空的解析</h3>${set.blanks.map((b,n)=>`<div class="psx"><b>（${n+1}）${esc(b.o[b.a])}</b> ${st.val[n]===1?'<span class="stars">✓</span>':st.val[n]>0?'<span class="note">（用了提示）</span>':`<span class="note">你选了：${st.pick[n]!=null?esc(opts[n][st.pick[n]].o):'没有选'}</span>`}${whyHTML(n)}</div>`).join('')}`:'<p class="muted" style="text-align:center">每一空都答对了，没有用提示，真棒！</p>'}
         ${pct<.6?`<p class="hintbox">觉得有点难？试试“一步一步”的做法，用“找线索”帮忙，再做一次。</p>`:''}
         <div class="row" style="justify-content:center;margin-top:12px">${st.val.some(v=>v<1)?`<button class="pri" id="redo">只改错的空（${st.val.filter(v=>v<1).length}）</button>`:''}<button id="again">再做一次</button><button ${st.val.some(v=>v<1)?'':'class="pri"'} id="ret">返回 PSLE 备考</button></div></div>`;newBadge=null;
@@ -864,7 +865,7 @@ function startListen(sid,prev){
       const anim=[];set.qs.forEach((q,n)=>{if(st.lock[n])return;const ok=st.pick[n]!=null&&opts[n][st.pick[n]].ok;st.val[n]=ok?(st.scriptUsed?.5:1):0;anim.push(st.val[n])});
       st.over=true;st.script=true;const pct=st.val.reduce((a,b)=>a+b,0)/N;record(id,pct);frame();
       const show=()=>{const rw=endBattle(B,lv0,g0);const got=st.val.reduce((a,b)=>a+b,0);
-        $('#rw').innerHTML=`<div class="card sum" style="margin-top:14px">${starHtml(starsOf(pct))}<p style="font-size:20px;margin:6px 0">得分 ${Math.round(got*10)/10} / ${N}</p>${rw}${storyNews()}${newBadge?`<div class="reward">新徽章：${BADGES.find(x=>x[0]===newBadge)[1]}</div>`:''}
+        $('#rw').innerHTML=`<div class="card sum" style="margin-top:14px">${starHtml(starsOf(pct))}<p style="font-size:20px;margin:6px 0">得分 ${Math.round(got*10)/10} / ${N}</p>${rw}${storyNews()}${newBadge?`<div class="reward">新徽章：${badgeName(newBadge)}</div>`:''}
           ${st.scriptUsed?'<p class="note">这次看了文字，答对的题算半分。下次试试先只听。</p>':''}
           <div class="row" style="justify-content:center;margin-top:12px">${st.val.some(v=>v<1)?`<button class="pri" id="redo">只改错的题（${st.val.filter(v=>v<1).length}）</button>`:''}<button id="again">再做一次</button><button ${st.val.some(v=>v<1)?'':'class="pri"'} id="ret">返回 PSLE 备考</button></div></div>`;newBadge=null;
         if($('#redo'))$('#redo').onclick=()=>startListen(sid,{val:st.val.slice()});
@@ -974,7 +975,7 @@ function confetti(){
   let t=0;(function f(){x.clearRect(0,0,W,H);P.forEach(p=>{p.vy+=H*.0009;p.vx*=.99;p.x+=p.vx;p.y+=p.vy;p.r+=p.vr;x.save();x.translate(p.x,p.y);x.rotate(p.r);x.fillStyle=p.c;x.fillRect(-p.s/2,-p.s/4,p.s,p.s/2);x.restore()});
     if(++t<130)requestAnimationFrame(f);else c.remove()})()}
 function levelUpFX(lv){
-  sfx('lvup');const d=document.createElement('div');d.className='lvup';d.setAttribute('role','dialog');d.setAttribute('aria-label','升级');
+  document.querySelectorAll('.lvup').forEach(x=>x.remove());sfx('lvup');const d=document.createElement('div');d.className='lvup';d.setAttribute('role','dialog');d.setAttribute('aria-label','升级');
   d.innerHTML=`<div><div class="rays"></div><div class="hb">${heroSVG(S.hero.type,gearOwned())}</div><h3>升级！Lv ${lv}</h3><p>${HEROES[S.hero.type].name}变强了！${upPoints()?`有 ${upPoints()} 个升级点，到“我的英雄”选择升级。`:""}</p><p style="font-size:13px;opacity:.75;margin-top:10px">点一下继续</p></div>`;
   const close=()=>{d.remove();document.removeEventListener('keydown',k)},k=e=>{if(e.key==='Escape'||e.key==='Enter')close()};
   d.onclick=close;document.addEventListener('keydown',k);document.body.appendChild(d);if(!reduceMotion())confetti();setTimeout(()=>{if(d.isConnected)close()},4000)}
@@ -1244,7 +1245,7 @@ function run(R){
      ${rw?`<div>${rw}</div>`:''}
      ${R.wt.size?`<p class="muted">需要多练习：${[...R.wt].map(esc).join('、')}</p>`:''}
      ${R.items[0]&&R.items[0].type==='g'?'':R.wrong.length?`<p class="muted">这些字放进了复习本：</p><div class="revchars kai">${R.wrong.map(c=>`<span>${c}</span>`).join('')}</div>`:'<p class="muted">全部答对，没有新的字要复习。</p>'}
-     ${newBadge?`<p>新徽章：<span class="reward">${BADGES.find(b=>b[0]===newBadge)[1]}</span></p>`:''}
+     ${newBadge?`<p>新徽章：<span class="reward">${badgeName(newBadge)}</span></p>`:''}
      ${help?`<div class="card" style="text-align:left;margin:14px 0"><b>觉得有点难？</b> 可以打开拼音和英文帮助，再试一次。<div class="row" style="margin-top:8px"><button id="helpOn">打开帮助</button></div></div>`:''}
      <div class="row" style="justify-content:center;margin-top:16px">${badIdx.length?`<button class="pri" id="redo">只做错的题（${badIdx.length}）</button>`:''}<button id="again">再做一次</button><button ${badIdx.length?'':'class="pri"'} id="ret">返回</button></div>
      ${badIdx.length?'<p class="note">只做错的题：答对了可以把分数和星星赢回来。</p>':''}</div>`;
@@ -1324,7 +1325,7 @@ function startReading(lv,i,prev){
     const fin=()=>{const rw=endBattle(B,lv0,g0);sub.disabled=false;sub.textContent='完成，返回';sub.type='button';sub.onclick=()=>go('level-'+lv.toLowerCase());
       $('#subm').innerHTML=`得分 ${Math.round(got*10)/10} / ${tot}　${starHtml(starsOf(pct))}`;
       const bad=Object.keys(vq).filter(j=>vq[j]<1).length;
-      $('#rw').innerHTML=`<div style="margin-top:12px">${rw}${storyNews()}${newBadge?`<div class="reward">新徽章：${BADGES.find(b=>b[0]===newBadge)[1]}</div>`:''}${bad?`<div class="row" style="margin-top:10px"><button class="pri" id="redo">只改错的题（${bad}）</button><span class="note">答对了可以把分数赢回来。</span></div>`:''}</div>`;newBadge=null;
+      $('#rw').innerHTML=`<div style="margin-top:12px">${rw}${storyNews()}${newBadge?`<div class="reward">新徽章：${badgeName(newBadge)}</div>`:''}${bad?`<div class="row" style="margin-top:10px"><button class="pri" id="redo">只改错的题（${bad}）</button><span class="note">答对了可以把分数赢回来。</span></div>`:''}</div>`;newBadge=null;
       if(bad)$('#redo').onclick=()=>startReading(lv,i,{vals:vq,ans})};
     if(B){$('#arena').scrollIntoView({behavior:'smooth',block:'center'});vals.forEach((v,k)=>setTimeout(()=>battleTurn(B,v),400+k*800));setTimeout(()=>{fin();sub.scrollIntoView({behavior:'smooth',block:'center'})},600+vals.length*800)}
     else{fin();sub.scrollIntoView({behavior:'smooth',block:'center'})}
